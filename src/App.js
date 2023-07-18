@@ -3,6 +3,7 @@ import {Text, StyleSheet} from 'react-native';
 import './App.css';
 import { getAuthors, getImages } from './api/request';
 import { addProperties, normalizeData } from '../src/utils/utils';
+import './assets/fonts/stylesheet.css';
 
 function App() {
   const [siteData, setSiteData] = useState({ imageData: [], authorData: [] });
@@ -15,7 +16,7 @@ function App() {
     change_shoot_every: 300,
     allow_nsfw: true,
     game_name_filter: '',
-    background_color: 'grey',
+    background_color: '#272727',
     display_shot_info: true,
     zoom_to_fit_ar: true,
   }
@@ -65,21 +66,22 @@ function App() {
 
   const textStyles = StyleSheet.create({
     gameTitle: {
-      fontSize: 64,
-      color: 'white',
-      opacity: 0.8,
+      fontSize: 58,
+      color: '#DBDFD8',
+      opacity: 0.9,
+      fontFamily: 'AtkinsonHyperlegible',
     },
     authorText:{
-      fontSize: 40,
-      color: 'white',
-      opacity: 0.6,
+      fontSize: 32,
+      color: '#DBDFD8',
+      opacity: 0.7,
+      fontFamily: 'AtkinsonHyperlegible',
     },
     textBox:{
       marginLeft: `${window.innerWidth / 10}px`,
       marginTop: `${(window.innerHeight / 3)*2.3}px`,
       display: config.display_shot_info ? 'block' : 'none',
-      fontFamily: 'Calibri',
-      textShadow: '0 0 3px #fff',
+      textShadow: '0 0 3px #DBDFD8',
       width: 'fit-content',
     },
   })
