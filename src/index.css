@@ -16,7 +16,6 @@ body {
   bottom: 0;
   right: 0;
   overflow: auto;
-  background: grey; /* Just to visualize the extent */
 }
 
 code {

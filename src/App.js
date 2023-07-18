@@ -1,4 +1,5 @@
 import React, { useState} from 'react';
+import {Text, StyleSheet} from 'react-native';
 import './App.css';
 import { getAuthors, getImages } from './api/request';
 import { addProperties, normalizeData } from '../src/utils/utils';
@@ -8,7 +9,18 @@ function App() {
   const [initialized, setInitialized] = useState(false);
   const [image, setImage] = useState(null);
 
-  const getData = async () => {
+  var config = {
+    ar_fuzzines: 0.2,
+    allow_narrow_ars: true,
+    change_shoot_every: 300,
+    allow_nsfw: true,
+    game_name_filter: '',
+    background_color: 'grey',
+    display_shot_info: true,
+    zoom_to_fit_ar: true,
+  }
+
+  const getData = async (config) => {
     setInitialized(true);
 
     const imagesResponse = await getImages({});
@@ -17,7 +29,13 @@ function App() {
     const normalizedImages = normalizeData(imagesResponse.data._default);
     const normalizedAuthors = normalizeData(authorsResponse.data._default);
 
-    const formattedImages = addProperties(normalizedImages, normalizedAuthors);
+    const windowAR = window.innerHeight / window.innerWidth
+
+    const filteredARImages = normalizedImages.filter(image => Math.abs((image.height / image.width) - windowAR) < config.ar_fuzzines && (config.allow_narrow_ars || (image.height / image.width) < windowAR))
+    const filteredSpoilerImages = filteredARImages.filter(image => config.allow_nsfw || !image.spoiler)
+    const filteredGameImages = filteredSpoilerImages.filter(image => image.gameName.toLowerCase().includes(config.game_name_filter.toLowerCase()))
+
+    const formattedImages = addProperties(filteredGameImages, normalizedAuthors);
 
     setSiteData({ imageData: formattedImages, authorData: normalizedAuthors});
 
@@ -25,24 +43,53 @@ function App() {
   };
 
   const image_style = (image) => {
-    const ar = image.height / image.width
-
-    console.log(ar)
-
     return {
+      background: config.background_color,
       backgroundImage: `url(${image.shotUrl})`,
-      backgroundSize: 'contain',
+      backgroundSize: config.zoom_to_fit_ar ? 'cover' : 'contain',
       backgroundRepeat: 'no-repeat',
       backgroundPosition: 'center center',
     }
-
   }
 
-  !initialized && getData();
+  !initialized && getData(config);
 
   const dataAvailable = siteData.imageData.length > 0 && siteData.authorData.length;
 
- return dataAvailable && <div className="BackgroundImage" style={image_style(image)}></div>
+  function switchImage() {
+      console.log("test")
+      return setImage(siteData.imageData[Math.floor(Math.random() * Math.floor(siteData.imageData.length - 1))])
+  }
+
+  //dataAvailable && setInterval(switchImage(), config.change_shoot_every)
+
+  const textStyles = StyleSheet.create({
+    gameTitle: {
+      fontSize: 64,
+      color: 'white',
+      opacity: 0.8,
+    },
+    authorText:{
+      fontSize: 40,
+      color: 'white',
+      opacity: 0.6,
+    },
+    textBox:{
+      marginLeft: `${window.innerWidth / 10}px`,
+      marginTop: `${(window.innerHeight / 3)*2.3}px`,
+      display: config.display_shot_info ? 'block' : 'none',
+      fontFamily: 'Calibri',
+      textShadow: '0 0 3px #fff',
+    },
+  })
+
+  return dataAvailable && <div className="BackgroundImage" style={image_style(image)}>
+    <div className="shot-info" style={textStyles.textBox}>
+      <Text style={textStyles.gameTitle}>{image.gameName}</Text>
+      <br></br>
+      <Text style={textStyles.authorText}>        by {image.author}</Text>
+    </div>
+  </div>
 }
 
 export default App;
