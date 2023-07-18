@@ -9,6 +9,8 @@ body {
   
 }
 
+a:-webkit-any-link{text-decoration: none;}
+
 .BackgroundImage{
   position: fixed;
   top: 0;

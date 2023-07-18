@@ -80,15 +80,16 @@ function App() {
       display: config.display_shot_info ? 'block' : 'none',
       fontFamily: 'Calibri',
       textShadow: '0 0 3px #fff',
+      width: 'fit-content',
     },
   })
 
   return dataAvailable && <div className="BackgroundImage" style={image_style(image)}>
-    <div className="shot-info" style={textStyles.textBox}>
+    <a className="shot-info" style={textStyles.textBox} href={`https://framedsc.com/HallOfFramed/?imageId=${image.epochTime}`} target='_blank'>
       <Text style={textStyles.gameTitle}>{image.gameName}</Text>
       <br></br>
       <Text style={textStyles.authorText}>        by {image.author}</Text>
-    </div>
+    </a>
   </div>
 }
 
