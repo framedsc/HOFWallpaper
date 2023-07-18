@@ -29,9 +29,9 @@ function App() {
     const normalizedImages = normalizeData(imagesResponse.data._default);
     const normalizedAuthors = normalizeData(authorsResponse.data._default);
 
-    const windowAR = window.innerHeight / window.innerWidth
+    const windowAR = window.innerWidth / window.innerHeight 
 
-    const filteredARImages = normalizedImages.filter(image => Math.abs((image.height / image.width) - windowAR) < config.ar_fuzzines && (config.allow_narrow_ars || (image.height / image.width) < windowAR))
+    const filteredARImages = normalizedImages.filter(image => Math.abs((image.width / image.height) - windowAR) < config.ar_fuzzines && (config.allow_narrow_ars || (image.width / image.height) < windowAR))
     const filteredSpoilerImages = filteredARImages.filter(image => config.allow_nsfw || !image.spoiler)
     const filteredGameImages = filteredSpoilerImages.filter(image => image.gameName.toLowerCase().includes(config.game_name_filter.toLowerCase()))
 
