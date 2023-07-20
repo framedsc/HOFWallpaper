@@ -1,4 +1,4 @@
-import React, { useEffect, useState} from 'react';
+import React, { useEffect, useState, useRef} from 'react';
 import {Text, StyleSheet} from 'react-native';
 import './App.css';
 import { getAuthors, getImages } from './api/request';
@@ -55,24 +55,28 @@ function App() {
     
   };
   
-  useEffect(() => {
-    if (isLoading) return
+  const renderInitialized = useRef(false)
 
-    let interval
-    // you can't have an async useEffect, so usually people create an async function and call it right after
-    const getDataAsync = async () => {
-      // awaiting for getData to finish
-      await getData(config, true)
-      // putting the setInterval function in a variable so we can clear when the component gets destroy
-      interval = setInterval(() => {
-        getData(config, false)
-      }, config.change_shoot_every);
-    }
-    getDataAsync()
-  
-    // this function gets called on component destroy (not necesserarly useful there but just in case)
-    return () => {
-      clearInterval(interval)
+  useEffect(() => {
+    if (!renderInitialized.current) {
+      renderInitialized.current = true
+
+      let interval
+      // you can't have an async useEffect, so usually people create an async function and call it right after
+      const getDataAsync = async () => {
+        // awaiting for getData to finish
+        await getData(config, true)
+        // putting the setInterval function in a variable so we can clear when the component gets destroy
+        interval = setInterval(() => {
+          getData(config, false)
+        }, config.change_shoot_every);
+      }
+      getDataAsync()
+    
+      // this function gets called on component destroy (not necesserarly useful there but just in case)
+      return () => {
+        clearInterval(interval)
+      }
     }
   }, [])
 
