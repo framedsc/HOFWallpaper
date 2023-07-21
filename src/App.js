@@ -8,8 +8,8 @@ import './assets/fonts/stylesheet.css';
 function App() {
   const [siteData, setSiteData] = useState({ imageData: [], authorData: [] });
   const [initialized, setInitialized] = useState(false);
-  const [image, setImage] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [image1, setImage1] = useState(null);
+  const [image2, setImage2] = useState(null);
 
   var config = {
     ar_fuzzines: 0.2,
@@ -42,20 +42,16 @@ function App() {
     setSiteData({ imageData: formattedImages, authorData: normalizedAuthors});
 
     if (first_run){
-      setImage(formattedImages[Math.floor(Math.random() * Math.floor(formattedImages.length - 1))]);
+      setImage1(formattedImages[Math.floor(Math.random() * Math.floor(formattedImages.length - 1))]);
+      setImage2(formattedImages[Math.floor(Math.random() * Math.floor(formattedImages.length - 1))]);
+      return;
     }
 
-
-    setIsLoading(true)
-    console.log("Loading new shot.")
-    const newImage = formattedImages[Math.floor(Math.random() * Math.floor(formattedImages.length - 1))]
-    var preloadImage = new Image();
-    preloadImage.src = `url(${preloadImage.shotUrl})`;
-    preloadImage.addEventListener("load", maybeSwitchImage(newImage));
-    
+    switchImage(formattedImages);
   };
   
   const renderInitialized = useRef(false)
+  const imageToDisplay = useRef(1)
 
   useEffect(() => {
     if (!renderInitialized.current) {
@@ -90,14 +86,15 @@ function App() {
 
   const dataAvailable = siteData.imageData.length > 0 && siteData.authorData.length;
 
-  function maybeSwitchImage(newImage) {
-    if (isLoading) return
-
-    console.log("changing image");
-    if (image!=newImage){
-      setImage(newImage)
+  function switchImage(imageData) {
+    if(imageToDisplay.current == 1){
+      imageToDisplay.current = 2
+      setImage1(imageData[Math.floor(Math.random() * Math.floor(imageData.length - 1))]);
     }
-    setIsLoading(false)
+    else if (imageToDisplay.current == 2){
+      imageToDisplay.current = 1
+      setImage2(imageData[Math.floor(Math.random() * Math.floor(imageData.length - 1))]);
+    }
   }
 
   const textStyles = StyleSheet.create({
@@ -123,13 +120,21 @@ function App() {
     },
   })
 
+  function imageElement(image, shouldDisplay){
+    return(<div style={{display: shouldDisplay ? 'block' : 'none'}}>
+      <img src={image.shotUrl}  style={image_style}/>
+      <a className="shot-info" style={textStyles.textBox} href={`https://framedsc.com/HallOfFramed/?imageId=${image.epochTime}`} target='_blank'>
+        <Text style={textStyles.gameTitle}>{image.gameName}</Text>
+        <br></br>
+        <Text style={textStyles.authorText}>        by {image.author}</Text>
+      </a>
+    </div>
+    )
+  }
+
   return dataAvailable && <div className="BackgroundImage" style={{background: config.background_color, width: window.innerWidth, height: window.innerHeight}}>
-    <img src={image.shotUrl}  style={image_style}/>
-    <a className="shot-info" style={textStyles.textBox} href={`https://framedsc.com/HallOfFramed/?imageId=${image.epochTime}`} target='_blank'>
-      <Text style={textStyles.gameTitle}>{image.gameName}</Text>
-      <br></br>
-      <Text style={textStyles.authorText}>        by {image.author}</Text>
-    </a>
+    {imageElement(image1, imageToDisplay.current == 1)}
+    {imageElement(image2, imageToDisplay.current == 2)}
   </div>
 }
 
