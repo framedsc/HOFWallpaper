@@ -82,16 +82,17 @@ function App() {
     objectFit: config.zoom_to_fit_ar ? 'cover' : 'contain',
     objectPosition: 'center',
     display: 'block', 
+    position: 'absolute',
   }
 
   const dataAvailable = siteData.imageData.length > 0 && siteData.authorData.length;
 
   function switchImage(imageData) {
-    if(imageToDisplay.current == 1){
+    if(imageToDisplay.current === 1){
       imageToDisplay.current = 2
       setImage1(imageData[Math.floor(Math.random() * Math.floor(imageData.length - 1))]);
     }
-    else if (imageToDisplay.current == 2){
+    else if (imageToDisplay.current === 2){
       imageToDisplay.current = 1
       setImage2(imageData[Math.floor(Math.random() * Math.floor(imageData.length - 1))]);
     }
@@ -121,8 +122,8 @@ function App() {
   })
 
   function imageElement(image, shouldDisplay){
-    return(<div style={{display: shouldDisplay ? 'block' : 'none'}}>
-      <img src={image.shotUrl}  style={image_style}/>
+    return(<div className="shot-background" style={{opacity: shouldDisplay ? 1 : 0, visibility: shouldDisplay ? 'visible' : 'hidden', transition: 'visibility 0.5s, opacity 0.5s'}}>
+    <img src={image.shotUrl}  style={image_style}/>
       <a className="shot-info" style={textStyles.textBox} href={`https://framedsc.com/HallOfFramed/?imageId=${image.epochTime}`} target='_blank'>
         <Text style={textStyles.gameTitle}>{image.gameName}</Text>
         <br></br>
@@ -133,8 +134,8 @@ function App() {
   }
 
   return dataAvailable && <div className="BackgroundImage" style={{background: config.background_color, width: window.innerWidth, height: window.innerHeight}}>
-    {imageElement(image1, imageToDisplay.current == 1)}
-    {imageElement(image2, imageToDisplay.current == 2)}
+    {imageElement(image1, imageToDisplay.current === 1)}
+    {imageElement(image2, imageToDisplay.current === 2)}
   </div>
 }
 
