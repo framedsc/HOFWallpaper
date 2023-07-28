@@ -11,6 +11,117 @@ function App() {
   const [image1, setImage1] = useState(null);
   const [image2, setImage2] = useState(null);
 
+  var init_config = {
+    ar_fuzzines: 0.2,
+    allow_narrow_ars: true,
+    change_shoot_every: 10000,
+    allow_nsfw: true,
+    game_name_filter: '',
+    background_color: '#272727',
+    display_shot_info: true,
+    zoom_to_fit_ar: true,
+  }
+
+  const [config, setConfig] = useState(init_config);
+  const [dirtyConfigFlag, setDirtyConfigFlag] = useState(false);
+  useEffect(() => {
+    console.log("leyendo config")
+    const storedConfig = JSON.parse(localStorage.getItem('config'))
+    if (!storedConfig){
+      localStorage.setItem('config', JSON.stringify(config));
+      setConfig(JSON.parse(localStorage.getItem('config')));
+      return;
+    }
+    setConfig(storedConfig);
+    console.log(storedConfig)
+  }, []);
+
+  useEffect(() => {
+      setDirtyConfigFlag(false);
+  }, [dirtyConfigFlag]);
+
+  const configStyle = { color: '#DBDFD8',
+    fontFamily: 'AtkinsonHyperlegible',
+  }
+
+  function addCheckbox(value_name, display_name){
+    function changeValue(value_name){
+      var new_config = config
+      new_config[value_name] = !new_config[value_name];
+      setConfig(new_config);
+      localStorage.setItem('config', JSON.stringify(config));
+      setDirtyConfigFlag(true);
+    }
+    return (<div>
+      <input type="checkbox" onChange={() => changeValue(value_name)} defaultChecked={config[value_name]}/>
+      <label style={configStyle}>{display_name}</label>
+      </div>)
+  }
+
+  function addSlider(value_name, display_name, min, max, step){
+    const changeValue = (event) => {
+      var new_config = config
+      console.log(`changing ${value_name} to ${event.target.value}`);
+      new_config[value_name] = event.target.value;
+      setConfig(new_config);
+      localStorage.setItem('config', JSON.stringify(config));
+      setDirtyConfigFlag(true);
+    };
+
+    return(<div>
+    <input type="range" id="volume" name={display_name} min={min} max={max} step={step} onInput={changeValue} onChange={changeValue} defaultValue={config[value_name]}/>
+    <label htmlFor={display_name} style={configStyle}>{display_name}</label>
+    </div>)
+  }
+
+  function addColor(value_name, display_name){
+    const changeValue = (event) => {
+      var new_config = config
+      console.log(`changing ${value_name} to ${event.target.value}`);
+      new_config[value_name] = event.target.value;
+      setConfig(new_config);
+      localStorage.setItem('config', JSON.stringify(config));
+      setDirtyConfigFlag(true);
+    };
+
+    return (<div>
+      <input type="color" id={display_name} name={display_name} onInput={changeValue} onChange={changeValue} defaultValue={config[value_name]}/>
+      <label htmlFor={display_name} style={configStyle}>{display_name}</label>
+    </div>)
+  }
+
+  function addTextInput(value_name, display_name){
+    const changeValue = (event) => {
+      var new_config = config
+      console.log(`changing ${value_name} to ${event.target.value}`);
+      new_config[value_name] = event.target.value;
+      setConfig(new_config);
+      localStorage.setItem('config', JSON.stringify(config));
+      setDirtyConfigFlag(true);
+    };
+
+    return (<div>
+      <input type="text" id={display_name} name={display_name} onInput={changeValue} onChange={changeValue} defaultValue={config[value_name]}/>
+      <label htmlFor={display_name} style={configStyle}>{display_name}</label>
+    </div>)
+  }
+
+
+
+
+  const configIconButton = (
+    <div className={"config-icon"} style={{position: 'absolute', top: '70%', left: '80%',}}>
+      {addSlider('ar_fuzzines', 'AR fuzzines', 0, 1, 0.01)}
+      {addSlider('change_shoot_every', `Change shot every ${Math.trunc(config.change_shoot_every/1000)} seconds`, 10000, 3600000, 500)}
+      {addTextInput('game_name_filter', 'Game Name Filter')}
+      {addColor('background_color', 'Background Color')}
+      {addCheckbox('allow_narrow_ars', 'Allow narrow AR shots')}
+      {addCheckbox('zoom_to_fit_ar', 'Zoom to fit AR')}
+      {addCheckbox('display_shot_info', 'Display shot info')}
+      {addCheckbox('allow_nsfw', 'Allow NSFW/Spoiler shots')}
+    </div>
+  );
+
 
   const getData = async (config, first_run) => {
     setInitialized(true);
@@ -23,7 +134,7 @@ function App() {
 
     const windowAR = window.innerWidth / window.innerHeight 
 
-    const filteredARImages = normalizedImages.filter(image => Math.abs((image.width / image.height) - windowAR) < config.ar_fuzzines && (config.allow_narrow_ars || (image.width / image.height) < windowAR))
+    const filteredARImages = normalizedImages.filter(image => Math.abs((image.width / image.height) - windowAR) < config.ar_fuzzines && (!config.allow_narrow_ars || (image.width / image.height) < windowAR))
     const filteredSpoilerImages = filteredARImages.filter(image => config.allow_nsfw || !image.spoiler)
     const filteredGameImages = filteredSpoilerImages.filter(image => image.gameName.toLowerCase().includes(config.game_name_filter.toLowerCase()))
 
@@ -51,11 +162,12 @@ function App() {
       // you can't have an async useEffect, so usually people create an async function and call it right after
       const getDataAsync = async () => {
         // awaiting for getData to finish
-        await getData(config, true)
+        await getData(JSON.parse(localStorage.getItem('config')), true)
         // putting the setInterval function in a variable so we can clear when the component gets destroy
+
         interval = setInterval(() => {
-          getData(config, false)
-        }, config.change_shoot_every);
+          getData(JSON.parse(localStorage.getItem('config')), false)
+        }, JSON.parse(localStorage.getItem('config')).change_shoot_every);
       }
       getDataAsync()
     
@@ -65,64 +177,6 @@ function App() {
       }
     }
   }, [])
-
-
-
-
-
-
-  var init_config = {
-    ar_fuzzines: 0.2,
-    allow_narrow_ars: true,
-    change_shoot_every: 10000,
-    allow_nsfw: true,
-    game_name_filter: '',
-    background_color: '#272727',
-    display_shot_info: true,
-    zoom_to_fit_ar: true,
-  }
-
-  const [config, setConfig] = useState(init_config);
-  const [dirtyConfigFlag, setDirtyConfigFlag] = useState(false);
-  useEffect(() => {
-    const storedConfig = JSON.parse(localStorage.getItem('config'))
-    if (!storedConfig){
-      localStorage.setItem('config', JSON.stringify(config));
-      setConfig(JSON.parse(localStorage.getItem('config')));
-      return;
-    }
-    setConfig(storedConfig);
-  }, []);
-
-  useEffect(() => {
-      const storedConfig = JSON.parse(localStorage.getItem('config'));
-      if (JSON.stringify(storedConfig)!=JSON.stringify(config)) {
-        console.log('Updated config');
-      }
-
-      setDirtyConfigFlag(false);
-  }, [dirtyConfigFlag]);
-
-  function addCheckbox(value_name, display_name){
-    function changeValue(value_name){
-      var new_config = config
-      new_config[value_name] = !new_config[value_name];
-      setConfig(new_config);
-      localStorage.setItem('config', JSON.stringify(config));
-      setDirtyConfigFlag(true);
-    }
-    return (<div>
-      <input type="checkbox" onChange={() => changeValue(value_name)} defaultChecked={config[value_name]}/>
-      <label style={{color: '#DBDFD8', fontFamily: 'AtkinsonHyperlegible'}}>{display_name}</label>
-      </div>)
-  }
-
-  const configIconButton = (
-    <div className={"config-icon"} style={{position: 'absolute'}}>
-      {addCheckbox('zoom_to_fit_ar', 'Zoom to fit AR')}
-      {addCheckbox('display_shot_info', 'Display shot info')}
-    </div>
-  );
 
   const image_style = {
     width: '100%',
