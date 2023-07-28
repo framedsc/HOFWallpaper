@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef} from 'react';
+import React, { useContext, createContext, useEffect, useState, useRef} from 'react';
 import {Text, StyleSheet} from 'react-native';
 import './App.css';
 import { getAuthors, getImages } from './api/request';
@@ -11,16 +11,6 @@ function App() {
   const [image1, setImage1] = useState(null);
   const [image2, setImage2] = useState(null);
 
-  var config = {
-    ar_fuzzines: 0.2,
-    allow_narrow_ars: true,
-    change_shoot_every: 10000,
-    allow_nsfw: true,
-    game_name_filter: '',
-    background_color: '#272727',
-    display_shot_info: true,
-    zoom_to_fit_ar: true,
-  }
 
   const getData = async (config, first_run) => {
     setInitialized(true);
@@ -75,6 +65,64 @@ function App() {
       }
     }
   }, [])
+
+
+
+
+
+
+  var init_config = {
+    ar_fuzzines: 0.2,
+    allow_narrow_ars: true,
+    change_shoot_every: 10000,
+    allow_nsfw: true,
+    game_name_filter: '',
+    background_color: '#272727',
+    display_shot_info: true,
+    zoom_to_fit_ar: true,
+  }
+
+  const [config, setConfig] = useState(init_config);
+  const [dirtyConfigFlag, setDirtyConfigFlag] = useState(false);
+  useEffect(() => {
+    const storedConfig = JSON.parse(localStorage.getItem('config'))
+    if (!storedConfig){
+      localStorage.setItem('config', JSON.stringify(config));
+      setConfig(JSON.parse(localStorage.getItem('config')));
+      return;
+    }
+    setConfig(storedConfig);
+  }, []);
+
+  useEffect(() => {
+      const storedConfig = JSON.parse(localStorage.getItem('config'));
+      if (JSON.stringify(storedConfig)!=JSON.stringify(config)) {
+        console.log('Updated config');
+      }
+
+      setDirtyConfigFlag(false);
+  }, [dirtyConfigFlag]);
+
+  function addCheckbox(value_name, display_name){
+    function changeValue(value_name){
+      var new_config = config
+      new_config[value_name] = !new_config[value_name];
+      setConfig(new_config);
+      localStorage.setItem('config', JSON.stringify(config));
+      setDirtyConfigFlag(true);
+    }
+    return (<div>
+      <input type="checkbox" onChange={() => changeValue(value_name)} defaultChecked={config[value_name]}/>
+      <label style={{color: '#DBDFD8', fontFamily: 'AtkinsonHyperlegible'}}>{display_name}</label>
+      </div>)
+  }
+
+  const configIconButton = (
+    <div className={"config-icon"} style={{position: 'absolute'}}>
+      {addCheckbox('zoom_to_fit_ar', 'Zoom to fit AR')}
+      {addCheckbox('display_shot_info', 'Display shot info')}
+    </div>
+  );
 
   const image_style = {
     width: '100%',
@@ -136,6 +184,7 @@ function App() {
   return dataAvailable && <div className="BackgroundImage" style={{background: config.background_color, width: window.innerWidth, height: window.innerHeight}}>
     {imageElement(image1, imageToDisplay.current === 1)}
     {imageElement(image2, imageToDisplay.current === 2)}
+    {configIconButton}
   </div>
 }
 
