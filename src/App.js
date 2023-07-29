@@ -25,7 +25,6 @@ function App() {
   const [config, setConfig] = useState(init_config);
   const [dirtyConfigFlag, setDirtyConfigFlag] = useState(false);
   useEffect(() => {
-    console.log("leyendo config")
     const storedConfig = JSON.parse(localStorage.getItem('config'))
     if (!storedConfig){
       localStorage.setItem('config', JSON.stringify(config));
@@ -33,7 +32,6 @@ function App() {
       return;
     }
     setConfig(storedConfig);
-    console.log(storedConfig)
   }, []);
 
   useEffect(() => {
@@ -128,7 +126,7 @@ function App() {
     width: '2500px',
     height: 'auto',
     padding: '10px 0px',
-    top: '75%',
+    bottom: '5%',
     left: 'calc(100% - 50px)',
     transition: 'left 0.5s',
     backgroundColor: 'rgba(59, 59, 59, 0.475)',
@@ -151,18 +149,29 @@ function App() {
     userSelect: 'none',
   }
 
+  const displayZoneStyle = {
+    position: 'absolute',
+    top: '20%',
+    left: '50%',
+    width: '50%',
+    height: '80%',
+    transition: 'opacity 0.5s',
+  }
+
   const configIconButton = (
-    <div className="config-menu" onMouseEnter={ (e) => e.target.style.left = 'calc(100% - 410px)'} onMouseLeave={ (e) => e.target.style.left = 'calc(100% - 50px)'} style={configMenuStyle}>
-      <div style={configMenuLabel}>Config</div>
-      <div>
-        {addSlider('ar_fuzzines', 'AR fuzzines', 0, 1, 0.01)}
-        {addShotTimerInput()}
-        {addTextInput('game_name_filter', 'Game Name Filter', 150)}
-        {addColor('background_color', 'Background Color')}
-        {addCheckbox('allow_narrow_ars', 'Allow narrow AR shots')}
-        {addCheckbox('zoom_to_fit_ar', 'Zoom to fit AR')}
-        {addCheckbox('display_shot_info', 'Display shot info')}
-        {addCheckbox('allow_nsfw', 'Allow NSFW/Spoiler shots')}
+    <div className="display-zone" onMouseEnter={ (e) => e.target.style.opacity = '100%'} onMouseLeave={ (e) => e.target.style.opacity = '0%'} style={displayZoneStyle}>
+      <div className="config-menu" onMouseEnter={ (e) => e.target.style.left = 'calc(100% - 360px)'} onMouseLeave={ (e) => e.target.style.left = 'calc(100% - 50px)'} style={configMenuStyle}>
+        <div style={configMenuLabel}>Config</div>
+        <div>
+          {addSlider('ar_fuzzines', 'AR fuzzines', 0, 1, 0.01)}
+          {addShotTimerInput()}
+          {addTextInput('game_name_filter', 'Game Name Filter', 150)}
+          {addColor('background_color', 'Background Color')}
+          {addCheckbox('allow_narrow_ars', 'Allow narrow AR shots')}
+          {addCheckbox('zoom_to_fit_ar', 'Zoom to fit AR')}
+          {addCheckbox('display_shot_info', 'Display shot info')}
+          {addCheckbox('allow_nsfw', 'Allow NSFW/Spoiler shots')}
+        </div>
       </div>
     </div>
   );
