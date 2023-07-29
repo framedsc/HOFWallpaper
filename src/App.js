@@ -187,7 +187,7 @@ function App() {
       <div className="config-menu" onMouseEnter={ (e) => e.target.style.left = 'calc(100% - 365px)'} onMouseLeave={ (e) => e.target.style.left = 'calc(100% - 50px)'} style={configMenuStyle}>
         <div style={configMenuLabel}>Config</div>
         <div>
-          {addSlider('ar_fuzzines', 'AR fuzzines', 'How different can the aspect ratio of the shots be \ncompared to the screen\'s aspect ratio.', 0, 1, 0.01)}
+          {addSlider('ar_fuzzines', 'AR fuzzines', 'How different can the aspect ratio of the shots be \ncompared to the screen\'s aspect ratio.', 0, 3, 0.1)}
           {addShotTimerInput()}
           {addTextInput('game_names_filter', 'Game Names Filter', 'Filter by game name. \nMay include multiples, separated by commas.', 150)}
           {addColor('background_color', 'Background Color')}
@@ -208,6 +208,9 @@ function App() {
     </div>
   );
 
+  function is_same_ar_orientation(ar1, ar2){
+    return (ar1 < 1 && ar2 < 1) || (ar1 >= 1 && ar2 >= 1)
+  }
 
   const getData = async (config, first_run) => {
     setInitialized(true);
@@ -218,9 +221,10 @@ function App() {
     const normalizedImages = normalizeData(imagesResponse.data._default);
     const normalizedAuthors = normalizeData(authorsResponse.data._default);
 
-    const windowAR = window.innerWidth / window.innerHeight 
+    const windowAR = window.innerWidth / window.innerHeight
 
-    const filteredARImages = normalizedImages.filter(image => Math.abs((image.width / image.height) - windowAR) < config.ar_fuzzines && (!config.preserve_ar_orientation || (image.width / image.height) < windowAR))
+    const filteredARImages = normalizedImages.filter(image => Math.abs((image.width / image.height) - windowAR) < config.ar_fuzzines && (!config.preserve_ar_orientation || is_same_ar_orientation(image.width / image.height, windowAR)))
+    
     const filteredSpoilerImages = filteredARImages.filter(image => config.allow_nsfw || !image.spoiler)
 
     const filteredGameNames = config.game_names_filter.toLowerCase().split(',').map(function(item) {
