@@ -86,7 +86,7 @@ function App() {
 
     return (<div>
       <input type="color" id={display_name} name={display_name} onInput={changeValue} onChange={changeValue} defaultValue={config[value_name]}/>
-      <label htmlFor={display_name} style={configStyle}>{display_name}</label>
+      <label htmlFor={display_name} style={configStyle}> {display_name}</label>
     </div>)
   }
 
@@ -102,17 +102,33 @@ function App() {
 
     return (<div>
       <input type="text" id={display_name} name={display_name} onInput={changeValue} onChange={changeValue} defaultValue={config[value_name]} style={{width: width}}/>
-      <label htmlFor={display_name} style={configStyle}>{display_name}</label>
+      <label htmlFor={display_name} style={configStyle}> {display_name}</label>
     </div>)
   }
 
+  function addShotTimerInput(){
+    const changeValue = (event) => {
+      var new_config = config
+      console.log(`changing change_shoot_every to ${event.target.value * 1000}`);
+      new_config.change_shoot_every = event.target.value * 1000;
+      setConfig(new_config);
+      localStorage.setItem('config', JSON.stringify(config));
+      setDirtyConfigFlag(true);
+    };
+
+    return (<div>
+      <input type="text" id={'shot-timer-input'} name={'shot-timer-input'} onInput={changeValue} onChange={changeValue} defaultValue={config.change_shoot_every/1000} style={{width: '40px'}}/>
+      <label htmlFor={'shot-timer-input'} style={configStyle}> {`Seconds between shots`}</label>
+    </div>)
+  }
 
   const configMenuStyle = {
     position: 'absolute',
     display: 'flex',
     width: '2500px',
     height: 'auto',
-    top: '65%',
+    padding: '10px 0px',
+    top: '75%',
     left: 'calc(100% - 50px)',
     transition: 'left 0.5s',
     backgroundColor: 'rgba(59, 59, 59, 0.475)',
@@ -140,7 +156,7 @@ function App() {
       <div style={configMenuLabel}>Config</div>
       <div>
         {addSlider('ar_fuzzines', 'AR fuzzines', 0, 1, 0.01)}
-        {addSlider('change_shoot_every', `Change shot every ${Math.trunc(config.change_shoot_every/1000)} seconds`, 10000, 3600000, 500)}
+        {addShotTimerInput()}
         {addTextInput('game_name_filter', 'Game Name Filter', 150)}
         {addColor('background_color', 'Background Color')}
         {addCheckbox('allow_narrow_ars', 'Allow narrow AR shots')}
