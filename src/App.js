@@ -275,6 +275,7 @@ function App() {
     objectPosition: 'center',
     display: 'block', 
     position: 'absolute',
+    imageRendering: 'high-quality',
   }
 
   const dataAvailable = siteData.imageData.length > 0 && siteData.authorData.length;
@@ -293,29 +294,33 @@ function App() {
   const textStyles = StyleSheet.create({
     gameTitle: {
       fontSize: 58,
-      color: '#DBDFD8',
+      color: 'white',
       opacity: 0.9,
       fontFamily: 'AtkinsonHyperlegible',
     },
     authorText:{
       fontSize: 32,
-      color: '#DBDFD8',
+      color: 'white',
       opacity: 0.7,
       fontFamily: 'AtkinsonHyperlegible',
     },
     textBox:{
       top: '75%',
       left: '10%',
-      display: config.display_shot_info ? 'block' : 'none',
-      textShadow: '0 0 3px #DBDFD8',
+      visibility: config.display_shot_info ? 'visible' : 'hidden',
+      textShadow: '0 0 3px #ffffffc9',
       width: 'fit-content',
       position: 'absolute',
+      opacity: config.display_shot_info ? '100%' : '0%',
+      transition: 'all 0.3s',
     },
   })
 
   function imageElement(image, shouldDisplay){
-    return(<div className="shot-background" style={{opacity: shouldDisplay ? 1 : 0, visibility: shouldDisplay ? 'visible' : 'hidden', transition: 'visibility 0.5s, opacity 0.5s'}}>
-    <img src={image.shotUrl}  style={image_style}/>
+    return(
+    <div className="shot-background" style={{opacity: shouldDisplay ? 1 : 0, visibility: shouldDisplay ? 'visible' : 'hidden', transition: 'visibility 0.5s, opacity 0.5s'}}>
+      <img src={'https://cdn.discordapp.com/attachments/549986930071175169/1094189370807947394/tlou-i_2023-04-07_08-31-06_stitch.png'}  style={image_style}/>
+      <div className= "gradient" style={{backgroundImage: 'radial-gradient(300% 100% at bottom left, rgb(0 0 0 / 40%) 10%, rgb(255 255 255 / 0%) 35%)', position: 'absolute', width: '100%', height: '100%', opacity: config.display_shot_info ? '100%' : '0%', transition: 'opacity 0.3s'}}/>
       <a className="shot-info" style={textStyles.textBox} href={`https://framedsc.com/HallOfFramed/?imageId=${image.epochTime}`} target='_blank'>
         <Text style={textStyles.gameTitle}>{image.gameName}</Text>
         <br></br>
