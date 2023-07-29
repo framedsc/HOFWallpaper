@@ -5,6 +5,7 @@ import { getAuthors, getImages } from './api/request';
 import { addProperties, normalizeData } from '../src/utils/utils';
 import './assets/fonts/stylesheet.css';
 import { Tooltip } from 'react-tooltip'
+import { FramedIcon } from './assets/svgIcons';
 
 function App() {
   const [siteData, setSiteData] = useState({ imageData: [], authorData: [] });
@@ -14,7 +15,7 @@ function App() {
 
   var init_config = {
     ar_fuzzines: 0.2,
-    allow_narrow_ars: true,
+    preserve_ar_orientation: true,
     change_shoot_every: 10000,
     allow_nsfw: false,
     game_names_filter: '',
@@ -190,10 +191,13 @@ function App() {
           {addShotTimerInput()}
           {addTextInput('game_names_filter', 'Game Names Filter', 'Filter by game name. \nMay include multiples, separated by commas.', 150)}
           {addColor('background_color', 'Background Color')}
-          {addCheckbox('allow_narrow_ars', 'Preserve AR orientation', 'Allow vertical shots if the window \nis horizontal and vice-versa.')}
+          {addCheckbox('preserve_ar_orientation', 'Preserve AR orientation', 'Allow vertical shots if the window \nis horizontal and vice-versa.')}
           {addCheckbox('zoom_to_fit_ar', 'Zoom to fit AR', '')}
           {addCheckbox('display_shot_info', 'Display shot info', '')}
           {addCheckbox('allow_nsfw', 'Allow NSFW/Spoiler shots', '')}
+          <div style={{width:'50px', height:'auto', float:'left', margin:'20px 10px 0px 0px', zIndex: 1}}>
+            <FramedIcon />
+          </div>
           <p style={creditsStyle}>
             Made by <a href='https://twitter.com/originalnicodr' style={{color: 'inherit', textDecoration: 'underline'}} target='_blank'>Originalnicodr</a> using <br/>
             the <a href='https://framedsc.com/HallOfFramed' style={{color: 'inherit', textDecoration: 'underline'}} target='_blank'>HallOfFramed</a> database. <br/>
@@ -216,7 +220,7 @@ function App() {
 
     const windowAR = window.innerWidth / window.innerHeight 
 
-    const filteredARImages = normalizedImages.filter(image => Math.abs((image.width / image.height) - windowAR) < config.ar_fuzzines && (!config.allow_narrow_ars || (image.width / image.height) < windowAR))
+    const filteredARImages = normalizedImages.filter(image => Math.abs((image.width / image.height) - windowAR) < config.ar_fuzzines && (!config.preserve_ar_orientation || (image.width / image.height) < windowAR))
     const filteredSpoilerImages = filteredARImages.filter(image => config.allow_nsfw || !image.spoiler)
 
     const filteredGameNames = config.game_names_filter.toLowerCase().split(',').map(function(item) {
@@ -315,7 +319,7 @@ function App() {
       <a className="shot-info" style={textStyles.textBox} href={`https://framedsc.com/HallOfFramed/?imageId=${image.epochTime}`} target='_blank'>
         <Text style={textStyles.gameTitle}>{image.gameName}</Text>
         <br></br>
-        <Text style={textStyles.authorText}>        by {image.author}</Text>
+        <Text style={textStyles.authorText}>        shot by {image.author}</Text>
       </a>
     </div>
     )
