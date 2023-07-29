@@ -140,7 +140,7 @@ function App() {
     transformOrigin: '0 0',
     transform: 'rotate(-90deg)',
     width: '50px',
-    marginTop: '135px',
+    marginTop: '175px',
     marginLeft: '5px',
     fontSize: 32,
     color: '#DBDFD8',
@@ -158,6 +158,12 @@ function App() {
     transition: 'opacity 0.5s',
   }
 
+  const creditsStyle = {
+    color: '#DBDFD8',
+    opacity: 0.9,
+    fontFamily: 'AtkinsonHyperlegible',
+  }
+
   const configIconButton = (
     <div className="display-zone" onMouseEnter={ (e) => e.target.style.opacity = '100%'} onMouseLeave={ (e) => e.target.style.opacity = '0%'} style={displayZoneStyle}>
       <div className="config-menu" onMouseEnter={ (e) => e.target.style.left = 'calc(100% - 360px)'} onMouseLeave={ (e) => e.target.style.left = 'calc(100% - 50px)'} style={configMenuStyle}>
@@ -171,6 +177,11 @@ function App() {
           {addCheckbox('zoom_to_fit_ar', 'Zoom to fit AR')}
           {addCheckbox('display_shot_info', 'Display shot info')}
           {addCheckbox('allow_nsfw', 'Allow NSFW/Spoiler shots')}
+          <p style={creditsStyle}>
+            Made by <a href='https://twitter.com/originalnicodr' style={{color: 'inherit', textDecoration: 'underline'}} target='_blank'>Originalnicodr</a> using <br/>
+            the <a href='https://framedsc.com/HallOfFramed' style={{color: 'inherit', textDecoration: 'underline'}} target='_blank'>HallOfFramed</a> database. <br/>
+            © FRAMED. All rights reserved.
+          </p>
         </div>
       </div>
     </div>
