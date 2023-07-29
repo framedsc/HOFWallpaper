@@ -4,6 +4,7 @@ import './App.css';
 import { getAuthors, getImages } from './api/request';
 import { addProperties, normalizeData } from '../src/utils/utils';
 import './assets/fonts/stylesheet.css';
+import { Tooltip } from 'react-tooltip'
 
 function App() {
   const [siteData, setSiteData] = useState({ imageData: [], authorData: [] });
@@ -15,7 +16,7 @@ function App() {
     ar_fuzzines: 0.2,
     allow_narrow_ars: true,
     change_shoot_every: 10000,
-    allow_nsfw: true,
+    allow_nsfw: false,
     game_names_filter: '',
     background_color: '#272727',
     display_shot_info: true,
@@ -38,11 +39,21 @@ function App() {
       setDirtyConfigFlag(false);
   }, [dirtyConfigFlag]);
 
-  const configStyle = { color: '#DBDFD8',
+  const configStyle = {
+    color: '#DBDFD8',
     fontFamily: 'AtkinsonHyperlegible',
+    marginLeft: '4px',
   }
 
-  function addCheckbox(value_name, display_name){
+  const tooltipStyle = {
+    backgroundColor: "#272727",
+    color: '#DBDFD8',
+    fontFamily: 'AtkinsonHyperlegible',
+    whiteSpace: 'pre-line',
+    textAlign: 'center',
+  }
+
+  function addCheckbox(value_name, display_name, tooltip){
     function changeValue(value_name){
       var new_config = config
       new_config[value_name] = !new_config[value_name];
@@ -52,11 +63,12 @@ function App() {
     }
     return (<div>
       <input type="checkbox" onChange={() => changeValue(value_name)} defaultChecked={config[value_name]}/>
-      <label style={configStyle}>{display_name}</label>
+      <label style={{...configStyle, textDecoration: (tooltip === '') ? 'none' : 'underline dotted'}} data-tooltip-id={display_name} data-tooltip-content={tooltip}>{display_name}</label>
+      <Tooltip id={display_name} style={tooltipStyle}/>
       </div>)
   }
 
-  function addSlider(value_name, display_name, min, max, step){
+  function addSlider(value_name, display_name, tooltip, min, max, step){
     const changeValue = (event) => {
       var new_config = config
       console.log(`changing ${value_name} to ${event.target.value}`);
@@ -67,8 +79,9 @@ function App() {
     };
 
     return(<div>
-    <input type="range" id="volume" name={display_name} min={min} max={max} step={step} onInput={changeValue} onChange={changeValue} defaultValue={config[value_name]}/>
-    <label htmlFor={display_name} style={configStyle}>{display_name}</label>
+    <input type="range" name={display_name} min={min} max={max} step={step} onInput={changeValue} onChange={changeValue} defaultValue={config[value_name]}/>
+    <label htmlFor={display_name} style={{...configStyle, textDecoration: (tooltip === '') ? 'none' : 'underline dotted'}} data-tooltip-id={display_name} data-tooltip-content={tooltip}>{display_name}</label>
+    <Tooltip id={display_name} style={tooltipStyle}/>
     </div>)
   }
 
@@ -88,7 +101,7 @@ function App() {
     </div>)
   }
 
-  function addTextInput(value_name, display_name, width){
+  function addTextInput(value_name, display_name, tooltip, width){
     const changeValue = (event) => {
       var new_config = config
       console.log(`changing ${value_name} to ${event.target.value}`);
@@ -100,7 +113,8 @@ function App() {
 
     return (<div>
       <input type="text" id={display_name} name={display_name} onInput={changeValue} onChange={changeValue} defaultValue={config[value_name]} style={{width: width}}/>
-      <label htmlFor={display_name} style={configStyle}> {display_name}</label>
+      <label htmlFor={display_name} style={{...configStyle, textDecoration: (tooltip === '') ? 'none' : 'underline dotted'}} data-tooltip-id={display_name} data-tooltip-content={tooltip}>{display_name}</label>
+      <Tooltip id={display_name} style={tooltipStyle}/>
     </div>)
   }
 
@@ -116,7 +130,8 @@ function App() {
 
     return (<div>
       <input type="text" id={'shot-timer-input'} name={'shot-timer-input'} onInput={changeValue} onChange={changeValue} defaultValue={config.change_shoot_every/1000} style={{width: '40px'}}/>
-      <label htmlFor={'shot-timer-input'} style={configStyle}> {`Seconds between shots`}</label>
+      <label htmlFor={'shot-timer-input'} style={{...configStyle, textDecoration: 'underline dotted'}} data-tooltip-id={'shot-timer-input'} data-tooltip-content={'Needs site reload.'}>{`Time between shots (in seconds)`}</label>
+      <Tooltip id={'shot-timer-input'} style={tooltipStyle}/>
     </div>)
   }
 
@@ -125,7 +140,7 @@ function App() {
     display: 'flex',
     width: '2500px',
     height: 'auto',
-    padding: '10px 0px',
+    padding: '10px 0px 0px',
     bottom: '5%',
     left: 'calc(100% - 50px)',
     transition: 'left 0.5s',
@@ -137,7 +152,7 @@ function App() {
   }
 
   const configMenuLabel = {
-    transformOrigin: '0 0',
+    transformOrigin: 'top left',
     transform: 'rotate(-90deg)',
     width: '50px',
     marginTop: '175px',
@@ -147,6 +162,8 @@ function App() {
     opacity: 0.7,
     fontFamily: 'AtkinsonHyperlegible',
     userSelect: 'none',
+    textAlign: 'center',
+    zIndex: -1,
   }
 
   const displayZoneStyle = {
@@ -166,17 +183,17 @@ function App() {
 
   const configIconButton = (
     <div className="display-zone" onMouseEnter={ (e) => e.target.style.opacity = '100%'} onMouseLeave={ (e) => e.target.style.opacity = '0%'} style={displayZoneStyle}>
-      <div className="config-menu" onMouseEnter={ (e) => e.target.style.left = 'calc(100% - 360px)'} onMouseLeave={ (e) => e.target.style.left = 'calc(100% - 50px)'} style={configMenuStyle}>
+      <div className="config-menu" onMouseEnter={ (e) => e.target.style.left = 'calc(100% - 365px)'} onMouseLeave={ (e) => e.target.style.left = 'calc(100% - 50px)'} style={configMenuStyle}>
         <div style={configMenuLabel}>Config</div>
         <div>
-          {addSlider('ar_fuzzines', 'AR fuzzines', 0, 1, 0.01)}
+          {addSlider('ar_fuzzines', 'AR fuzzines', 'How different can the aspect ratio of the shots be \ncompared to the screen\'s aspect ratio.', 0, 1, 0.01)}
           {addShotTimerInput()}
-          {addTextInput('game_names_filter', 'Game Names Filter', 150)}
+          {addTextInput('game_names_filter', 'Game Names Filter', 'Filter by game name. \nMay include multiples, separated by commas.', 150)}
           {addColor('background_color', 'Background Color')}
-          {addCheckbox('allow_narrow_ars', 'Allow narrow AR shots')}
-          {addCheckbox('zoom_to_fit_ar', 'Zoom to fit AR')}
-          {addCheckbox('display_shot_info', 'Display shot info')}
-          {addCheckbox('allow_nsfw', 'Allow NSFW/Spoiler shots')}
+          {addCheckbox('allow_narrow_ars', 'Preserve AR orientation', 'Allow vertical shots if the window \nis horizontal and vice-versa.')}
+          {addCheckbox('zoom_to_fit_ar', 'Zoom to fit AR', '')}
+          {addCheckbox('display_shot_info', 'Display shot info', '')}
+          {addCheckbox('allow_nsfw', 'Allow NSFW/Spoiler shots', '')}
           <p style={creditsStyle}>
             Made by <a href='https://twitter.com/originalnicodr' style={{color: 'inherit', textDecoration: 'underline'}} target='_blank'>Originalnicodr</a> using <br/>
             the <a href='https://framedsc.com/HallOfFramed' style={{color: 'inherit', textDecoration: 'underline'}} target='_blank'>HallOfFramed</a> database. <br/>
