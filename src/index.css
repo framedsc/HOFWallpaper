@@ -6,7 +6,6 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  
 }
 
 a:-webkit-any-link{text-decoration: none;}
@@ -17,7 +16,7 @@ a:-webkit-any-link{text-decoration: none;}
   left: 0;
   bottom: 0;
   right: 0;
-  overflow: auto;
+  overflow: hidden;
 }
 
 code {

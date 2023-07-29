@@ -90,7 +90,7 @@ function App() {
     </div>)
   }
 
-  function addTextInput(value_name, display_name){
+  function addTextInput(value_name, display_name, width){
     const changeValue = (event) => {
       var new_config = config
       console.log(`changing ${value_name} to ${event.target.value}`);
@@ -101,24 +101,53 @@ function App() {
     };
 
     return (<div>
-      <input type="text" id={display_name} name={display_name} onInput={changeValue} onChange={changeValue} defaultValue={config[value_name]}/>
+      <input type="text" id={display_name} name={display_name} onInput={changeValue} onChange={changeValue} defaultValue={config[value_name]} style={{width: width}}/>
       <label htmlFor={display_name} style={configStyle}>{display_name}</label>
     </div>)
   }
 
 
+  const configMenuStyle = {
+    position: 'absolute',
+    display: 'flex',
+    width: '2500px',
+    height: 'auto',
+    top: '65%',
+    left: 'calc(100% - 50px)',
+    transition: 'left 0.5s',
+    backgroundColor: 'rgba(59, 59, 59, 0.475)',
+    borderRadius: '10px',
+    border: '2px solid #DBDFD8',
+    boxShadow: '0 0 3px #DBDFD8',
+    backdropFilter: 'blur(10px)',
+  }
 
+  const configMenuLabel = {
+    transformOrigin: '0 0',
+    transform: 'rotate(-90deg)',
+    width: '50px',
+    marginTop: '135px',
+    marginLeft: '5px',
+    fontSize: 32,
+    color: '#DBDFD8',
+    opacity: 0.7,
+    fontFamily: 'AtkinsonHyperlegible',
+    userSelect: 'none',
+  }
 
   const configIconButton = (
-    <div className={"config-icon"} style={{position: 'absolute', top: '70%', left: '80%',}}>
-      {addSlider('ar_fuzzines', 'AR fuzzines', 0, 1, 0.01)}
-      {addSlider('change_shoot_every', `Change shot every ${Math.trunc(config.change_shoot_every/1000)} seconds`, 10000, 3600000, 500)}
-      {addTextInput('game_name_filter', 'Game Name Filter')}
-      {addColor('background_color', 'Background Color')}
-      {addCheckbox('allow_narrow_ars', 'Allow narrow AR shots')}
-      {addCheckbox('zoom_to_fit_ar', 'Zoom to fit AR')}
-      {addCheckbox('display_shot_info', 'Display shot info')}
-      {addCheckbox('allow_nsfw', 'Allow NSFW/Spoiler shots')}
+    <div className="config-menu" onMouseEnter={ (e) => e.target.style.left = 'calc(100% - 410px)'} onMouseLeave={ (e) => e.target.style.left = 'calc(100% - 50px)'} style={configMenuStyle}>
+      <div style={configMenuLabel}>Config</div>
+      <div>
+        {addSlider('ar_fuzzines', 'AR fuzzines', 0, 1, 0.01)}
+        {addSlider('change_shoot_every', `Change shot every ${Math.trunc(config.change_shoot_every/1000)} seconds`, 10000, 3600000, 500)}
+        {addTextInput('game_name_filter', 'Game Name Filter', 150)}
+        {addColor('background_color', 'Background Color')}
+        {addCheckbox('allow_narrow_ars', 'Allow narrow AR shots')}
+        {addCheckbox('zoom_to_fit_ar', 'Zoom to fit AR')}
+        {addCheckbox('display_shot_info', 'Display shot info')}
+        {addCheckbox('allow_nsfw', 'Allow NSFW/Spoiler shots')}
+      </div>
     </div>
   );
 
