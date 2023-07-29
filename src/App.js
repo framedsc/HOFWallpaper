@@ -187,7 +187,7 @@ function App() {
       <div className="config-menu" onMouseEnter={ (e) => e.target.style.left = 'calc(100% - 365px)'} onMouseLeave={ (e) => e.target.style.left = 'calc(100% - 50px)'} style={configMenuStyle}>
         <div style={configMenuLabel}>Config</div>
         <div>
-          {addSlider('ar_fuzzines', 'AR fuzzines', 'How different can the aspect ratio of the shots be \ncompared to the screen\'s aspect ratio.', 0, 3, 0.1)}
+          {addSlider('ar_fuzzines', 'AR fuzzines', 'How different can the aspect ratio of the shots be \ncompared to the screen\'s aspect ratio.', 0.1, 3, 0.1)}
           {addShotTimerInput()}
           {addTextInput('game_names_filter', 'Game Names Filter', 'Filter by game name. \nMay include multiples, separated by commas.', 150)}
           {addColor('background_color', 'Background Color')}
@@ -235,6 +235,8 @@ function App() {
     const formattedImages = addProperties(filteredGameImages, normalizedAuthors);
 
     setSiteData({ imageData: formattedImages, authorData: normalizedAuthors});
+
+    if (formattedImages.length === 0) return;
 
     if (first_run){
       setImage1(formattedImages[Math.floor(Math.random() * Math.floor(formattedImages.length - 1))]);
@@ -318,6 +320,16 @@ function App() {
       opacity: config.display_shot_info ? '100%' : '0%',
       transition: 'all 0.3s',
     },
+    noShotsFound:{
+      fontSize: 50,
+      color: 'white',
+      opacity: 0.9,
+      fontFamily: 'AtkinsonHyperlegible',
+      position: 'absolute',
+      top: '35%',
+      width: '100%',
+      textAlign: 'center',
+    }
   })
 
   function imageElement(image, shouldDisplay){
@@ -334,7 +346,15 @@ function App() {
     )
   }
 
-  return dataAvailable && <div className="BackgroundImage" style={{background: config.background_color, width: window.innerWidth, height: window.innerHeight}}>
+  //Missing shots
+  if (siteData.imageData.length === 0){
+    return <div className="BackgroundImage" style={{background: config.background_color, width: window.innerWidth, height: window.innerHeight}}>
+      {<label style={textStyles.noShotsFound}>No matching shots were found. Please check the <br></br>game names filter or increase the AR fuzziness.</label>}
+      {configIconButton}
+    </div>
+  }
+
+  return image1 && image2 && <div className="BackgroundImage" style={{background: config.background_color, width: window.innerWidth, height: window.innerHeight}}>
     {imageElement(image1, imageToDisplay.current === 1)}
     {imageElement(image2, imageToDisplay.current === 2)}
     {configIconButton}
