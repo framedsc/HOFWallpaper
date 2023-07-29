@@ -16,7 +16,7 @@ function App() {
     allow_narrow_ars: true,
     change_shoot_every: 10000,
     allow_nsfw: true,
-    game_name_filter: '',
+    game_names_filter: '',
     background_color: '#272727',
     display_shot_info: true,
     zoom_to_fit_ar: true,
@@ -171,7 +171,7 @@ function App() {
         <div>
           {addSlider('ar_fuzzines', 'AR fuzzines', 0, 1, 0.01)}
           {addShotTimerInput()}
-          {addTextInput('game_name_filter', 'Game Name Filter', 150)}
+          {addTextInput('game_names_filter', 'Game Names Filter', 150)}
           {addColor('background_color', 'Background Color')}
           {addCheckbox('allow_narrow_ars', 'Allow narrow AR shots')}
           {addCheckbox('zoom_to_fit_ar', 'Zoom to fit AR')}
@@ -201,7 +201,11 @@ function App() {
 
     const filteredARImages = normalizedImages.filter(image => Math.abs((image.width / image.height) - windowAR) < config.ar_fuzzines && (!config.allow_narrow_ars || (image.width / image.height) < windowAR))
     const filteredSpoilerImages = filteredARImages.filter(image => config.allow_nsfw || !image.spoiler)
-    const filteredGameImages = filteredSpoilerImages.filter(image => image.gameName.toLowerCase().includes(config.game_name_filter.toLowerCase()))
+
+    const filteredGameNames = config.game_names_filter.toLowerCase().split(',').map(function(item) {
+      return item.trim();
+    });
+    const filteredGameImages = (filteredGameNames === ['']) ? filteredSpoilerImages : filteredSpoilerImages.filter(image => filteredGameNames.some(filterGameName => image.gameName.toLowerCase().includes(filterGameName)))
 
     const formattedImages = addProperties(filteredGameImages, normalizedAuthors);
 
