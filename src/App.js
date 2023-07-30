@@ -274,14 +274,34 @@ function App() {
     }
   }, [])
 
-  const image_style = {
-    width: '100%',
-    height: window.innerHeight,
-    objectFit: config.zoom_to_fit_ar ? 'cover' : 'contain',
-    objectPosition: 'center',
-    display: 'block', 
-    position: 'absolute',
-    imageRendering: 'high-quality',
+  function image_style(image){
+    const imageAR = image.width / image.height
+    const windowAR = window.innerWidth / window.innerHeight
+    const match_height = window.innerHeight / image.height
+    const match_width = window.innerWidth / image.width
+
+    const desired_zoom = (
+      config.zoom_to_fit_ar ?
+      (imageAR < windowAR ? match_width : match_height) :
+      (imageAR < windowAR ? match_height : match_width)
+    )
+
+    return {
+      backgroundImage: `url(${image.shotUrl})`,
+      width: image.width,
+      height: image.height,
+      backgroundSize: 'contain',
+      backgroundAttachment: 'fixed',
+      backgroundRepeat: 'no-repeat',
+      display: 'block', 
+      position: 'absolute',
+      imageRendering: 'high-quality',
+      zoom: desired_zoom,
+      backgroundPosition: 'center',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+    }
   }
 
   const dataAvailable = siteData.imageData.length > 0 && siteData.authorData.length;
@@ -335,7 +355,7 @@ function App() {
   function imageElement(image, shouldDisplay){
     return(
     <div className="shot-background" style={{opacity: shouldDisplay ? 1 : 0, visibility: shouldDisplay ? 'visible' : 'hidden', transition: 'visibility 0.5s, opacity 0.5s'}}>
-      <img src={image.shotUrl}  style={image_style}/>
+      <div style={image_style(image)}/>
       <div className= "gradient" style={{backgroundImage: 'radial-gradient(300% 100% at bottom left, rgb(0 0 0 / 40%) 10%, rgb(255 255 255 / 0%) 35%)', position: 'absolute', width: '100%', height: '100%', opacity: config.display_shot_info ? '100%' : '0%', transition: 'opacity 0.3s'}}/>
       <a className="shot-info" style={textStyles.textBox} href={`https://framedsc.com/HallOfFramed/?imageId=${image.epochTime}`} target='_blank'>
         <Text style={textStyles.gameTitle}>{image.gameName}</Text>
