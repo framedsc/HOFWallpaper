@@ -17,14 +17,14 @@ function App() {
 
   //-----Config menu------
   var init_config = {
-    ar_fuzzines: 0.2,
+    ar_fuzzines: 1,
     preserve_ar_orientation: true,
-    change_shoot_every: 10000,
+    change_shoot_every: 30000,
     allow_nsfw: false,
     game_names_filter: '',
     background_color: '#272727',
     zoom_to_fit_ar: true,
-    displayed_info: {value: 'none', label: 'None'},
+    displayed_info: {value: 'shot_info', label: 'Shot Info'},
     scroll_shot: true,
     scroll_speed: 8,
   }
