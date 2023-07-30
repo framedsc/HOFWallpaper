@@ -1,4 +1,4 @@
-import React, { useContext, createContext, useEffect, useState, useRef} from 'react';
+import React, { useEffect, useState, useRef} from 'react';
 import {Text, StyleSheet} from 'react-native';
 import './App.css';
 import { getAuthors, getImages } from './api/request';
@@ -11,7 +11,6 @@ import { splashScreen } from './components/splashScreen';
 
 function App() {
   const [siteData, setSiteData] = useState({ imageData: [], authorData: [] });
-  const [initialized, setInitialized] = useState(false);
   const [image1, setImage1] = useState(null);
   const [image2, setImage2] = useState(null);
 
@@ -266,8 +265,8 @@ function App() {
             <FramedIcon />
           </div>
           <p style={creditsStyle}>
-            Made by <a href='https://twitter.com/originalnicodr' style={{color: 'inherit', textDecoration: 'underline'}} target='_blank'>Originalnicodr</a> using <br/>
-            the <a href='https://framedsc.com/HallOfFramed' style={{color: 'inherit', textDecoration: 'underline'}} target='_blank'>HallOfFramed</a> database. <br/>
+            Made by <a href='https://twitter.com/originalnicodr' style={{color: 'inherit', textDecoration: 'underline'}} target='_blank' rel='noreferrer'>Originalnicodr</a> using <br/>
+            the <a href='https://framedsc.com/HallOfFramed' style={{color: 'inherit', textDecoration: 'underline'}} target='_blank' rel='noreferrer'>HallOfFramed</a> database. <br/>
             © FRAMED. All rights reserved.
           </p>
         </div>
@@ -281,8 +280,6 @@ function App() {
   }
 
   const getData = async (config, first_run) => {
-    setInitialized(true);
-
     const imagesResponse = await getImages({});
     const authorsResponse = await getAuthors({});
 
@@ -342,8 +339,6 @@ function App() {
     }
   }, [])
 
-  const dataAvailable = siteData.imageData.length > 0 && siteData.authorData.length;
-
   function switchImage(imageData) {
     if(imageToDisplay.current === 1){
       imageToDisplay.current = 2
@@ -393,7 +388,7 @@ function App() {
 
   function shotInfo(image) {
     return (
-    <a className="shot-info" style={textStyles.textBox} href={`https://framedsc.com/HallOfFramed/?imageId=${image.epochTime}`} target='_blank'>
+    <a className="shot-info" style={textStyles.textBox} href={`https://framedsc.com/HallOfFramed/?imageId=${image.epochTime}`} target='_blank' rel='noreferrer'>
       <Text style={textStyles.gameTitle}>{image.gameName}</Text>
       <br></br>
       <Text style={textStyles.authorText}>        shot by {image.author}</Text>
@@ -410,7 +405,6 @@ function App() {
       return setTime({clock: date.getHours() + ':' + date.getMinutes(), date: date.getDate() + '-' + date.getMonth() + '-' + date.getFullYear()}), 1000
     }
     );
-
 
     return () => {
       clearInterval(interval);
@@ -540,7 +534,7 @@ function App() {
     {imageElement(image1, imageToDisplay.current === 1)}
     {imageElement(image2, imageToDisplay.current === 2)}
     {clockAndDate}
-    {imageToDisplay.current == 1 ? shotInfo(image1) : shotInfo(image2)}
+    {imageToDisplay.current === 1 ? shotInfo(image1) : shotInfo(image2)}
     {configIconButton}
   </div>
 }
