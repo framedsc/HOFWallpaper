@@ -29,3 +29,12 @@ code {
     transform: translateY(-100vh);
   }
 }
+
+@keyframes animated-shot {
+  0% {
+    transform: translate(var(--xStart), var(--yStart));
+  }
+  100% {
+    transform: translate(var(--xEnd), var(--yEnd));
+  }
+}

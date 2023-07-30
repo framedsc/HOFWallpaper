@@ -15,6 +15,7 @@ function App() {
   const [image1, setImage1] = useState(null);
   const [image2, setImage2] = useState(null);
 
+  //-----Config menu------
   var init_config = {
     ar_fuzzines: 0.2,
     preserve_ar_orientation: true,
@@ -24,6 +25,8 @@ function App() {
     background_color: '#272727',
     zoom_to_fit_ar: true,
     displayed_info: {value: 'none', label: 'None'},
+    scroll_shot: true,
+    time_scroll_shot: 40,
   }
 
   const [config, setConfig] = useState(init_config);
@@ -217,7 +220,7 @@ function App() {
     transformOrigin: 'top left',
     transform: 'rotate(-90deg)',
     width: '50px',
-    marginTop: '175px',
+    marginTop: '200px',
     marginLeft: '5px',
     fontSize: 32,
     color: '#DBDFD8',
@@ -256,6 +259,8 @@ function App() {
           {addCheckbox('zoom_to_fit_ar', 'Zoom to fit AR', '')}
           {addCheckbox('allow_nsfw', 'Allow NSFW/Spoiler shots', '')}
           {addTextSelector()}
+          {addCheckbox('scroll_shot', 'Scroll zoomed shot', 'Only available if "Zoom to fit AR" option is enabled.')}
+          {addSlider('time_scroll_shot', 'Scroll animation time', '', 10, 40, 0.1)}
 
           <div style={{width:'50px', height:'auto', float:'left', margin:'20px 10px 0px 0px', zIndex: 1}}>
             <FramedIcon />
@@ -270,6 +275,7 @@ function App() {
     </div>
   );
 
+  //-----Data API call------
   function is_same_ar_orientation(ar1, ar2){
     return (ar1 < 1 && ar2 < 1) || (ar1 >= 1 && ar2 >= 1)
   }
@@ -336,36 +342,6 @@ function App() {
     }
   }, [])
 
-  function image_style(image){
-    const imageAR = image.width / image.height
-    const windowAR = window.innerWidth / window.innerHeight
-    const match_height = window.innerHeight / image.height
-    const match_width = window.innerWidth / image.width
-
-    const desired_zoom = (
-      config.zoom_to_fit_ar ?
-      (imageAR < windowAR ? match_width : match_height) :
-      (imageAR < windowAR ? match_height : match_width)
-    )
-
-    return {
-      backgroundImage: `url(${image.shotUrl})`,
-      width: image.width,
-      height: image.height,
-      backgroundSize: 'contain',
-      backgroundAttachment: 'fixed',
-      backgroundRepeat: 'no-repeat',
-      display: 'block', 
-      position: 'absolute',
-      imageRendering: 'high-quality',
-      zoom: desired_zoom,
-      backgroundPosition: 'center',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-    }
-  }
-
   const dataAvailable = siteData.imageData.length > 0 && siteData.authorData.length;
 
   function switchImage(imageData) {
@@ -379,6 +355,7 @@ function App() {
     }
   }
 
+  //------Shot Info------
   const textStyles = StyleSheet.create({
     gameTitle: {
       fontSize: 58,
@@ -424,6 +401,7 @@ function App() {
     )
   }
 
+  //------Time and Date------
   const [time, setTime] = useState(Date.now());
 
   useEffect(() => {
@@ -458,13 +436,14 @@ function App() {
       display: 'flex',
       flexFlow: 'column',
       position: 'absolute',
-      top: '75%',
+      bottom: '200px',
       left: '10%',
       visibility: config.displayed_info.value === 'clock_and_date' ? 'visible' : 'hidden',
       textShadow: '0 0 3px #ffffffc9',
       width: 'fit-content',
       opacity: config.displayed_info.value === 'clock_and_date' ? '100%' : '0%',
       transition: 'all 0.3s',
+      userSelect: 'none',
     },
   })
 
@@ -474,17 +453,78 @@ function App() {
       <Text style={dateStyle.date}>{time.date}</Text>
     </div>
   )
+  
+  //------Shot Component------
+
+  function image_style(image, shouldDisplay){
+    const imageAR = image.width / image.height
+    const windowAR = window.innerWidth / window.innerHeight
+    const match_height = window.innerHeight / image.height
+    const match_width = window.innerWidth / image.width
+
+    const desired_zoom = (
+      config.zoom_to_fit_ar ?
+      (imageAR < windowAR ? match_width : match_height) :
+      (imageAR < windowAR ? match_height : match_width)
+    )
+    
+    //Animation update
+    if(shouldDisplay){
+      const direction = Math.pow(-1 ,imageToDisplay.current)
+      const xoffset = !config.zoom_to_fit_ar || !config.scroll_shot ? 0 : direction * (desired_zoom * image.width - window.innerWidth) / 2
+      const yoffset = !config.zoom_to_fit_ar || !config.scroll_shot ? 0 : direction * (desired_zoom * image.height - window.innerHeight) / 2
+  
+      document.documentElement.style.setProperty(
+        '--xStart',
+        `calc(-50% - ${xoffset}px)`
+      );
+      document.documentElement.style.setProperty(
+        '--xEnd',
+        `calc(-50% + ${xoffset}px)`
+      );
+      document.documentElement.style.setProperty(
+        '--yStart',
+        `calc(-50% - ${yoffset}px)`
+      );
+      document.documentElement.style.setProperty(
+        '--yEnd',
+        `calc(-50% + ${yoffset}px)`
+      );  
+    }
+
+    return {
+      backgroundImage: `url(${image.shotUrl})`,
+      width: image.width,
+      height: image.height,
+      backgroundSize: 'contain',
+      backgroundAttachment: 'fixed',
+      backgroundRepeat: 'no-repeat',
+      display: 'block', 
+      position: 'absolute',
+      imageRendering: 'high-quality',
+      zoom: desired_zoom,
+      backgroundPosition: 'center',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      animationName: 'animated-shot',
+      animationDuration: `${config.time_scroll_shot}s`,
+      animationTimingFunction: 'ease-in-out',
+      animationIterationCount: 'infinite',
+      animationDirection: 'alternate-reverse',
+    }
+  }
 
   function imageElement(image, shouldDisplay){
     return(
-    <div className="shot-background" style={{opacity: shouldDisplay ? 1 : 0, visibility: shouldDisplay ? 'visible' : 'hidden', transition: 'visibility 0.5s, opacity 0.5s'}}>
-      <div style={image_style(image)}/>
+    <div className="shot-wrapper" style={{opacity: shouldDisplay ? 1 : 0, transition: 'opacity 0.5s'}}>
+      <div className="shot-background" style={image_style(image, shouldDisplay)}/>
       <div className= "gradient" style={{backgroundImage: 'radial-gradient(300% 100% at bottom left, rgb(0 0 0 / 40%) 10%, rgb(255 255 255 / 0%) 35%)', position: 'absolute', width: '100%', height: '100%', opacity: config.displayed_info.value !== 'none' ? '100%' : '0%', transition: 'opacity 0.3s'}}/>
     </div>
     )
   }
 
-  //Missing shots
+  //------Missing shots Component------
   if (siteData.imageData.length === 0){
     return <div className="BackgroundImage" style={{background: config.background_color, width: window.innerWidth, height: window.innerHeight}}>
       {splashScreen}
