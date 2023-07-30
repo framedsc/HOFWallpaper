@@ -26,7 +26,7 @@ function App() {
     zoom_to_fit_ar: true,
     displayed_info: {value: 'none', label: 'None'},
     scroll_shot: true,
-    time_scroll_shot: 40,
+    scroll_speed: 8,
   }
 
   const [config, setConfig] = useState(init_config);
@@ -260,7 +260,7 @@ function App() {
           {addCheckbox('allow_nsfw', 'Allow NSFW/Spoiler shots', '')}
           {addTextSelector()}
           {addCheckbox('scroll_shot', 'Scroll zoomed shot', 'Only available if "Zoom to fit AR" option is enabled.')}
-          {addSlider('time_scroll_shot', 'Scroll animation time', '', 10, 40, 0.1)}
+          {addSlider('scroll_speed', 'Scroll speed', '', 1, 50, 0.1)}
 
           <div style={{width:'50px', height:'auto', float:'left', margin:'20px 10px 0px 0px', zIndex: 1}}>
             <FramedIcon />
@@ -467,13 +467,15 @@ function App() {
       (imageAR < windowAR ? match_width : match_height) :
       (imageAR < windowAR ? match_height : match_width)
     )
+
+    const direction = Math.pow(-1 ,imageToDisplay.current)
+    const xoffset = !config.zoom_to_fit_ar || !config.scroll_shot ? 0 : direction * (desired_zoom * image.width - window.innerWidth) / 2
+    const yoffset = !config.zoom_to_fit_ar || !config.scroll_shot ? 0 : direction * (desired_zoom * image.height - window.innerHeight) / 2
+
+    const scrollTime = (Math.abs(xoffset * 2) + Math.abs(yoffset * 2)) / config.scroll_speed
     
     //Animation update
     if(shouldDisplay){
-      const direction = Math.pow(-1 ,imageToDisplay.current)
-      const xoffset = !config.zoom_to_fit_ar || !config.scroll_shot ? 0 : direction * (desired_zoom * image.width - window.innerWidth) / 2
-      const yoffset = !config.zoom_to_fit_ar || !config.scroll_shot ? 0 : direction * (desired_zoom * image.height - window.innerHeight) / 2
-  
       document.documentElement.style.setProperty(
         '--xStart',
         `calc(-50% - ${xoffset}px)`
@@ -508,7 +510,7 @@ function App() {
       left: '50%',
       transform: 'translate(-50%, -50%)',
       animationName: 'animated-shot',
-      animationDuration: `${config.time_scroll_shot}s`,
+      animationDuration: `${scrollTime}s`,
       animationTimingFunction: 'ease-in-out',
       animationIterationCount: 'infinite',
       animationDirection: 'alternate-reverse',
