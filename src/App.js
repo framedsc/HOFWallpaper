@@ -5,6 +5,7 @@ import { getAuthors, getImages } from './api/request';
 import { addProperties, normalizeData } from '../src/utils/utils';
 import './assets/fonts/stylesheet.css';
 import { Tooltip } from 'react-tooltip'
+import Select from 'react-select'
 import { FramedIcon } from './assets/svgIcons';
 import { splashScreen } from './components/splashScreen';
 
@@ -21,8 +22,8 @@ function App() {
     allow_nsfw: false,
     game_names_filter: '',
     background_color: '#272727',
-    display_shot_info: true,
     zoom_to_fit_ar: true,
+    displayed_info: {value: 'none', label: 'None'},
   }
 
   const [config, setConfig] = useState(init_config);
@@ -137,6 +138,65 @@ function App() {
     </div>)
   }
 
+  function addTextSelector(){
+    const options = [
+      { value: 'none', label: 'None' },
+      { value: 'shot_info', label: 'Shot Info' },
+      { value: 'clock_and_date', label: 'Clock and Date' }
+    ]
+
+    const handleChange = (value, action) => {
+      var new_config = config
+      console.log(`changing displayed_info to ${value.value}`);
+      new_config.displayed_info = value;
+      setConfig(new_config);
+      localStorage.setItem('config', JSON.stringify(config));
+      setDirtyConfigFlag(true);
+    };
+
+    return (
+    <div style={{display: 'flex'}}>
+      <Select
+        styles={{
+          option: provided => ({
+            ...provided,
+            fontSize: '13px',
+          }),
+          control: provided => ({
+            ...provided,
+            fontSize: '13px',
+            minHeight: '30px',
+            height: '30px',
+            width: '150px',
+          }),
+          singleValue: provided => ({
+            ...provided,
+            fontSize: '13px',
+          }),
+          valueContainer: provided => ({
+            ...provided,
+            height: '30px',
+            width: '150px',
+            padding: '0 6px',
+          }),
+          indicatorsContainer: provided => ({
+            ...provided,
+            height: '30px',
+          }),
+        }}
+        
+        defaultValue={config.displayed_info}
+        isClearable={false}
+        className='react-select'
+        classNamePrefix='select'
+        options={options}
+        onChange={handleChange}
+      />
+      <label className='form-label' style={{...configStyle, marginTop: '5px'}}>Displayed info</label>
+    </div>
+      )
+  }
+
   const configMenuStyle = {
     position: 'absolute',
     display: 'flex',
@@ -194,8 +254,9 @@ function App() {
           {addColor('background_color', 'Background Color')}
           {addCheckbox('preserve_ar_orientation', 'Preserve AR orientation', 'Allow vertical shots if the window \nis horizontal and vice-versa.')}
           {addCheckbox('zoom_to_fit_ar', 'Zoom to fit AR', '')}
-          {addCheckbox('display_shot_info', 'Display shot info', '')}
           {addCheckbox('allow_nsfw', 'Allow NSFW/Spoiler shots', '')}
+          {addTextSelector()}
+
           <div style={{width:'50px', height:'auto', float:'left', margin:'20px 10px 0px 0px', zIndex: 1}}>
             <FramedIcon />
           </div>
@@ -334,11 +395,11 @@ function App() {
     textBox:{
       top: '75%',
       left: '10%',
-      visibility: config.display_shot_info ? 'visible' : 'hidden',
+      visibility: config.displayed_info.value === 'shot_info' ? 'visible' : 'hidden',
       textShadow: '0 0 3px #ffffffc9',
       width: 'fit-content',
       position: 'absolute',
-      opacity: config.display_shot_info ? '100%' : '0%',
+      opacity: config.displayed_info.value === 'shot_info' ? '100%' : '0%',
       transition: 'all 0.3s',
     },
     noShotsFound:{
@@ -353,16 +414,72 @@ function App() {
     }
   })
 
+  function shotInfo(image) {
+    return (
+    <a className="shot-info" style={textStyles.textBox} href={`https://framedsc.com/HallOfFramed/?imageId=${image.epochTime}`} target='_blank'>
+      <Text style={textStyles.gameTitle}>{image.gameName}</Text>
+      <br></br>
+      <Text style={textStyles.authorText}>        shot by {image.author}</Text>
+    </a>
+    )
+  }
+
+  const [time, setTime] = useState(Date.now());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const date = new Date();
+      return setTime({clock: date.getHours() + ':' + date.getMinutes(), date: date.getDate() + '-' + date.getMonth() + '-' + date.getFullYear()}), 1000
+    }
+    );
+
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+
+  const dateStyle = StyleSheet.create({
+    clock: {
+      fontSize: 100,
+      color: 'white',
+      opacity: 0.9,
+      fontFamily: 'AtkinsonHyperlegible',
+    },
+    date:{
+      fontSize: 45,
+      color: 'white',
+      opacity: 0.7,
+      left: '30%',
+      marginTop: '-10%',
+      fontFamily: 'AtkinsonHyperlegible',
+    },
+    box:{
+      display: 'flex',
+      flexFlow: 'column',
+      position: 'absolute',
+      top: '75%',
+      left: '10%',
+      visibility: config.displayed_info.value === 'clock_and_date' ? 'visible' : 'hidden',
+      textShadow: '0 0 3px #ffffffc9',
+      width: 'fit-content',
+      opacity: config.displayed_info.value === 'clock_and_date' ? '100%' : '0%',
+      transition: 'all 0.3s',
+    },
+  })
+
+  const clockAndDate = (
+    <div className='clock-and-date' style={dateStyle.box}>
+      <Text style={dateStyle.clock}>{time.clock}</Text>
+      <Text style={dateStyle.date}>{time.date}</Text>
+    </div>
+  )
+
   function imageElement(image, shouldDisplay){
     return(
     <div className="shot-background" style={{opacity: shouldDisplay ? 1 : 0, visibility: shouldDisplay ? 'visible' : 'hidden', transition: 'visibility 0.5s, opacity 0.5s'}}>
       <div style={image_style(image)}/>
-      <div className= "gradient" style={{backgroundImage: 'radial-gradient(300% 100% at bottom left, rgb(0 0 0 / 40%) 10%, rgb(255 255 255 / 0%) 35%)', position: 'absolute', width: '100%', height: '100%', opacity: config.display_shot_info ? '100%' : '0%', transition: 'opacity 0.3s'}}/>
-      <a className="shot-info" style={textStyles.textBox} href={`https://framedsc.com/HallOfFramed/?imageId=${image.epochTime}`} target='_blank'>
-        <Text style={textStyles.gameTitle}>{image.gameName}</Text>
-        <br></br>
-        <Text style={textStyles.authorText}>        shot by {image.author}</Text>
-      </a>
+      <div className= "gradient" style={{backgroundImage: 'radial-gradient(300% 100% at bottom left, rgb(0 0 0 / 40%) 10%, rgb(255 255 255 / 0%) 35%)', position: 'absolute', width: '100%', height: '100%', opacity: config.displayed_info.value !== 'none' ? '100%' : '0%', transition: 'opacity 0.3s'}}/>
     </div>
     )
   }
@@ -380,6 +497,8 @@ function App() {
     {splashScreen}
     {imageElement(image1, imageToDisplay.current === 1)}
     {imageElement(image2, imageToDisplay.current === 2)}
+    {clockAndDate}
+    {imageToDisplay.current == 1 ? shotInfo(image1) : shotInfo(image2)}
     {configIconButton}
   </div>
 }
