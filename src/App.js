@@ -6,6 +6,7 @@ import { addProperties, normalizeData } from '../src/utils/utils';
 import './assets/fonts/stylesheet.css';
 import { Tooltip } from 'react-tooltip'
 import { FramedIcon } from './assets/svgIcons';
+import { splashScreen } from './components/splashScreen';
 
 function App() {
   const [siteData, setSiteData] = useState({ imageData: [], authorData: [] });
@@ -369,12 +370,14 @@ function App() {
   //Missing shots
   if (siteData.imageData.length === 0){
     return <div className="BackgroundImage" style={{background: config.background_color, width: window.innerWidth, height: window.innerHeight}}>
+      {splashScreen}
       {<label style={textStyles.noShotsFound}>No matching shots were found. Please check the <br></br>game names filter or increase the AR fuzziness.</label>}
       {configIconButton}
     </div>
   }
 
   return image1 && image2 && <div className="BackgroundImage" style={{background: config.background_color, width: window.innerWidth, height: window.innerHeight}}>
+    {splashScreen}
     {imageElement(image1, imageToDisplay.current === 1)}
     {imageElement(image2, imageToDisplay.current === 2)}
     {configIconButton}

@@ -24,3 +24,8 @@ code {
     monospace;
 }
 
+@keyframes splashScreen {
+  100% {
+    transform: translateY(-100vh);
+  }
+}
