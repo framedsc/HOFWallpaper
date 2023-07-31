@@ -1,4 +1,4 @@
-import axios, * as others from 'axios';
+import axios from 'axios';
 const IMAGESAPI = 'https://raw.githubusercontent.com/originalnicodrgitbot/hall-of-framed-db/main/shotsdb.json';
 const AUTHORSAPI = 'https://raw.githubusercontent.com/originalnicodrgitbot/hall-of-framed-db/main/authorsdb.json';
 //const axios = require('axios');
