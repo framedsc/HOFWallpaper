@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/HOFWallpaper/static/css/main.2056c502.css",
-    "main.js": "/HOFWallpaper/static/js/main.24b62793.js",
+    "main.css": "/HOFWallpaper/static/css/main.47b5c349.css",
+    "main.js": "/HOFWallpaper/static/js/main.c96856c8.js",
     "static/js/787.9c8d7b20.chunk.js": "/HOFWallpaper/static/js/787.9c8d7b20.chunk.js",
     "static/media/GalanoGrotesqueAlt-Regular.eot": "/HOFWallpaper/static/media/GalanoGrotesqueAlt-Regular.b0e6ca8874e21f5a47c0.eot",
     "static/media/GalanoGrotesqueAlt-Regular.ttf": "/HOFWallpaper/static/media/GalanoGrotesqueAlt-Regular.19ef97d33b8b2c4cf240.ttf",
@@ -16,12 +16,12 @@
     "static/media/GalanoGrotesqueAlt-Bold.woff2": "/HOFWallpaper/static/media/GalanoGrotesqueAlt-Bold.0a09ce8f42790b16fdd4.woff2",
     "static/media/GalanoGrotesqueAlt-Regular.woff2": "/HOFWallpaper/static/media/GalanoGrotesqueAlt-Regular.880bcd136afd4b18fe37.woff2",
     "index.html": "/HOFWallpaper/index.html",
-    "main.2056c502.css.map": "/HOFWallpaper/static/css/main.2056c502.css.map",
-    "main.24b62793.js.map": "/HOFWallpaper/static/js/main.24b62793.js.map",
+    "main.47b5c349.css.map": "/HOFWallpaper/static/css/main.47b5c349.css.map",
+    "main.c96856c8.js.map": "/HOFWallpaper/static/js/main.c96856c8.js.map",
     "787.9c8d7b20.chunk.js.map": "/HOFWallpaper/static/js/787.9c8d7b20.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.2056c502.css",
-    "static/js/main.24b62793.js"
+    "static/css/main.47b5c349.css",
+    "static/js/main.c96856c8.js"
   ]
 }
