@@ -502,7 +502,6 @@ function App() {
       display: 'block', 
       position: 'absolute',
       imageRendering: 'high-quality',
-      //zoom: desired_zoom,
       backgroundPosition: 'center',
       top: '50%',
       left: '50%',

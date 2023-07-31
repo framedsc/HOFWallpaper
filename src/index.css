@@ -8,7 +8,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-a:-webkit-any-link{text-decoration: none;}
+a {text-decoration: none;}
 
 .BackgroundImage{
   position: fixed;
