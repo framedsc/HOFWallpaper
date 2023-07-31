@@ -485,6 +485,10 @@ function App() {
       document.documentElement.style.setProperty(
         '--yEnd',
         `calc(-50% + ${yoffset}px)`
+      );
+      document.documentElement.style.setProperty(
+        '--zoom',
+        desired_zoom
       );  
     }
 
@@ -498,11 +502,11 @@ function App() {
       display: 'block', 
       position: 'absolute',
       imageRendering: 'high-quality',
-      zoom: desired_zoom,
+      //zoom: desired_zoom,
       backgroundPosition: 'center',
       top: '50%',
       left: '50%',
-      transform: 'translate(-50%, -50%)',
+      transform: `translate(-50%, -50%) scale(${desired_zoom})`,
       animationName: 'animated-shot',
       animationDuration: `${scrollTime}s`,
       animationTimingFunction: 'ease-in-out',

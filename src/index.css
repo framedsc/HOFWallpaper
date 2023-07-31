@@ -32,9 +32,9 @@ code {
 
 @keyframes animated-shot {
   0% {
-    transform: translate(var(--xStart), var(--yStart));
+    transform: translate(var(--xStart), var(--yStart)) scale(var(--zoom));
   }
   100% {
-    transform: translate(var(--xEnd), var(--yEnd));
+    transform: translate(var(--xEnd), var(--yEnd)) scale(var(--zoom));
   }
 }
