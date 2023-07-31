@@ -38,7 +38,7 @@ function App() {
       return;
     }
     setConfig(storedConfig);
-  }, []);
+  }, [config]);
 
   useEffect(() => {
       setDirtyConfigFlag(false);
@@ -337,7 +337,7 @@ function App() {
         clearInterval(interval)
       }
     }
-  }, [])
+  },)
 
   function switchImage(imageData) {
     if(imageToDisplay.current === 1){
@@ -402,7 +402,7 @@ function App() {
   useEffect(() => {
     const interval = setInterval(() => {
       const date = new Date();
-      return setTime({clock: date.getHours() + ':' + date.getMinutes(), date: date.getDate() + '-' + date.getMonth() + '-' + date.getFullYear()}), 1000
+      return setTime({clock: date.getHours() + ':' + date.getMinutes(), date: date.getDate() + '-' + date.getMonth() + '-' + date.getFullYear()})
     }
     );
 
