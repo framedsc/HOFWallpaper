@@ -1,0 +1,27 @@
+{
+  "files": {
+    "main.css": "/static/css/main.7739f040.css",
+    "main.js": "/static/js/main.fe95b865.js",
+    "static/js/787.9c8d7b20.chunk.js": "/static/js/787.9c8d7b20.chunk.js",
+    "static/media/GalanoGrotesqueAlt-Regular.eot": "/static/media/GalanoGrotesqueAlt-Regular.b0e6ca8874e21f5a47c0.eot",
+    "static/media/GalanoGrotesqueAlt-Regular.ttf": "/static/media/GalanoGrotesqueAlt-Regular.19ef97d33b8b2c4cf240.ttf",
+    "static/media/GalanoGrotesqueAlt-Bold.eot": "/static/media/GalanoGrotesqueAlt-Bold.6e736cc1b0dae12d0e5e.eot",
+    "static/media/GalanoGrotesqueAlt-Bold.ttf": "/static/media/GalanoGrotesqueAlt-Bold.8198d2e5944ea929161b.ttf",
+    "static/media/AtkinsonHyperlegible-Bold.woff": "/static/media/AtkinsonHyperlegible-Bold.7d54882b4c50e32b6b37.woff",
+    "static/media/AtkinsonHyperlegible-Regular.woff": "/static/media/AtkinsonHyperlegible-Regular.b5105cbe6c9094262cdc.woff",
+    "static/media/GalanoGrotesqueAlt-Bold.woff": "/static/media/GalanoGrotesqueAlt-Bold.7c72eeeda3bbd0e194a7.woff",
+    "static/media/GalanoGrotesqueAlt-Regular.woff": "/static/media/GalanoGrotesqueAlt-Regular.d302862d5c611632909a.woff",
+    "static/media/AtkinsonHyperlegible-Bold.woff2": "/static/media/AtkinsonHyperlegible-Bold.99147dc591e9c5c13bad.woff2",
+    "static/media/AtkinsonHyperlegible-Regular.woff2": "/static/media/AtkinsonHyperlegible-Regular.3f6fdb1202d5eb47ecb2.woff2",
+    "static/media/GalanoGrotesqueAlt-Bold.woff2": "/static/media/GalanoGrotesqueAlt-Bold.0a09ce8f42790b16fdd4.woff2",
+    "static/media/GalanoGrotesqueAlt-Regular.woff2": "/static/media/GalanoGrotesqueAlt-Regular.880bcd136afd4b18fe37.woff2",
+    "index.html": "/index.html",
+    "main.7739f040.css.map": "/static/css/main.7739f040.css.map",
+    "main.fe95b865.js.map": "/static/js/main.fe95b865.js.map",
+    "787.9c8d7b20.chunk.js.map": "/static/js/787.9c8d7b20.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.7739f040.css",
+    "static/js/main.fe95b865.js"
+  ]
+}
