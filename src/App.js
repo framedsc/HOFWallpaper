@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef} from 'react';
+import React, { useMemo, useEffect, useState, useRef} from 'react';
 import {Text, StyleSheet} from 'react-native';
 import './App.css';
 import { getAuthors, getImages } from './api/request';
@@ -16,30 +16,34 @@ function App() {
   const [image2, setImage2] = useState(null);
 
   //-----Config menu------
-  var init_config = {
-    ar_fuzzines: 1,
-    preserve_ar_orientation: true,
-    change_shoot_every: 30000,
-    allow_nsfw: false,
-    game_names_filter: '',
-    background_color: '#272727',
-    zoom_to_fit_ar: true,
-    displayed_info: {value: 'shot_info', label: 'Shot Info'},
-    scroll_shot: true,
-    scroll_speed: 8,
-  }
+  const init_config = useMemo(
+    () => {
+      return {
+      ar_fuzzines: 1,
+      preserve_ar_orientation: true,
+      change_shoot_every: 30000,
+      allow_nsfw: false,
+      game_names_filter: '',
+      background_color: '#272727',
+      zoom_to_fit_ar: true,
+      displayed_info: {value: 'shot_info', label: 'Shot Info'},
+      scroll_shot: true,
+      scroll_speed: 8,
+    }},
+    []
+  );
 
   const [config, setConfig] = useState(init_config);
   const [dirtyConfigFlag, setDirtyConfigFlag] = useState(false);
   useEffect(() => {
     const storedConfig = JSON.parse(localStorage.getItem('config'))
     if (!storedConfig){
-      localStorage.setItem('config', JSON.stringify(config));
+      localStorage.setItem('config', JSON.stringify(init_config));
       setConfig(JSON.parse(localStorage.getItem('config')));
       return;
     }
     setConfig(storedConfig);
-  }, []);
+  }, [init_config]);
 
   useEffect(() => {
       setDirtyConfigFlag(false);
@@ -485,7 +489,7 @@ function App() {
     {splashScreen}
     {imageElement(image1, imageToDisplay.current === 1)}
     {imageElement(image2, imageToDisplay.current === 2)}
-    <div className='clock-wrapper' style={{opacity: config.displayed_info.value === 'clock_and_date' ? '100%' : '0%',}}>
+    <div className='clock-wrapper' style={{opacity: config.displayed_info.value === 'clock_and_date' ? '100%' : '0%',  transition: 'opacity 0.5s'}}>
       <ClockAndDate />
     </div>
     {imageToDisplay.current === 1 ? shotInfo(image1) : shotInfo(image2)}
