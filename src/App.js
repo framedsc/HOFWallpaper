@@ -8,6 +8,7 @@ import { Tooltip } from 'react-tooltip'
 import Select from 'react-select'
 import { FramedIcon } from './assets/svgIcons';
 import { splashScreen } from './components/splashScreen';
+import { ClockAndDate } from './components/clock'
 
 function App() {
   const [siteData, setSiteData] = useState({ imageData: [], authorData: [] });
@@ -38,7 +39,7 @@ function App() {
       return;
     }
     setConfig(storedConfig);
-  }, [config]);
+  }, []);
 
   useEffect(() => {
       setDirtyConfigFlag(false);
@@ -395,58 +396,6 @@ function App() {
     </a>
     )
   }
-
-  //------Time and Date------
-  const [time, setTime] = useState(Date.now());
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const date = new Date();
-      return setTime({clock: date.getHours() + ':' + date.getMinutes(), date: date.getDate() + '-' + date.getMonth() + '-' + date.getFullYear()})
-    }
-    );
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
-
-  const dateStyle = StyleSheet.create({
-    clock: {
-      fontSize: 100,
-      color: 'white',
-      opacity: 0.9,
-      fontFamily: 'AtkinsonHyperlegible',
-    },
-    date:{
-      fontSize: 45,
-      color: 'white',
-      opacity: 0.7,
-      left: '30%',
-      marginTop: '-10%',
-      fontFamily: 'AtkinsonHyperlegible',
-    },
-    box:{
-      display: 'flex',
-      flexFlow: 'column',
-      position: 'absolute',
-      bottom: '200px',
-      left: '10%',
-      visibility: config.displayed_info.value === 'clock_and_date' ? 'visible' : 'hidden',
-      textShadow: '0 0 3px #ffffffc9',
-      width: 'fit-content',
-      opacity: config.displayed_info.value === 'clock_and_date' ? '100%' : '0%',
-      transition: 'all 0.3s',
-      userSelect: 'none',
-    },
-  })
-
-  const clockAndDate = (
-    <div className='clock-and-date' style={dateStyle.box}>
-      <Text style={dateStyle.clock}>{time.clock}</Text>
-      <Text style={dateStyle.date}>{time.date}</Text>
-    </div>
-  )
   
   //------Shot Component------
 
@@ -536,7 +485,9 @@ function App() {
     {splashScreen}
     {imageElement(image1, imageToDisplay.current === 1)}
     {imageElement(image2, imageToDisplay.current === 2)}
-    {clockAndDate}
+    <div className='clock-wrapper' style={{opacity: config.displayed_info.value === 'clock_and_date' ? '100%' : '0%',}}>
+      <ClockAndDate />
+    </div>
     {imageToDisplay.current === 1 ? shotInfo(image1) : shotInfo(image2)}
     {configIconButton}
   </div>
