@@ -46,10 +46,13 @@ export class ClockAndDate extends Component {
   render() {
     const date = new Date();
 
+    const formattedHours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours()
+    const formattedMinutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()
+
     return (
       <div className='clock-and-date' style={dateStyle.box}>
-        <Text style={dateStyle.clock}>{date.getHours() + ':' + date.getMinutes()}</Text>
-        <Text style={dateStyle.date}>{date.getDate() + '-' + date.getMonth() + '-' + date.getFullYear()}</Text>
+        <Text style={dateStyle.clock}>{formattedHours + ':' + formattedMinutes}</Text>
+        <Text style={dateStyle.date}>{`${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`}</Text>
       </div>
     );
   }
