@@ -20,7 +20,7 @@ function App() {
     () => {
       return {
       ar_fuzzines: 1,
-      preserve_ar_orientation: true,
+      ar_filter: {value: 'none', label: 'None'},
       change_shoot_every: 30000,
       allow_nsfw: false,
       game_names_filter: '',
@@ -210,6 +210,70 @@ function App() {
       )
   }
 
+  function addARFilterSelector(){
+    const options = [
+      { value: 'none', label: 'None' },
+      { value: 'orientation_filter', label: 'Orientation filter' },
+      { value: 'ar_exclusion_filter', label: 'AR exclusion filter' }
+    ]
+
+    const handleChange = (value, action) => {
+      const windowAR = window.innerWidth / window.innerHeight
+      const imgAR = image1.width / image1.height
+      console.log(wider_or_narrower(windowAR, imgAR))
+
+      var new_config = config
+      console.log(`changing ar_filter to ${value.value}`);
+      new_config.ar_filter = value;
+      setConfig(new_config);
+      localStorage.setItem('config', JSON.stringify(config));
+      setDirtyConfigFlag(true);
+    };
+
+    return (
+    <div style={{display: 'flex'}}>
+      <Select
+        styles={{
+          option: provided => ({
+            ...provided,
+            fontSize: '13px',
+          }),
+          control: provided => ({
+            ...provided,
+            fontSize: '13px',
+            minHeight: '30px',
+            height: '30px',
+            width: '160px',
+          }),
+          singleValue: provided => ({
+            ...provided,
+            fontSize: '13px',
+          }),
+          valueContainer: provided => ({
+            ...provided,
+            height: '30px',
+            width: '160px',
+            padding: '0 6px',
+          }),
+          indicatorsContainer: provided => ({
+            ...provided,
+            height: '30px',
+          }),
+        }}
+        
+        defaultValue={config.ar_filter}
+        isClearable={false}
+        className='react-select'
+        classNamePrefix='select'
+        options={options}
+        onChange={handleChange}
+      />
+      <label className='ar-filter-selector-label' id='ar-filter-selector-label' style={{...configStyle, marginTop: '5px', textDecoration: 'underline dotted'}} data-tooltip-id={'ar-filter-selector-label'} data-tooltip-content={'Orientation filter: Only allows shots with the same orientation as the window.\n AR exclusion filter: Only allows shots which aspect ratio is bigger/smaller than \nthe window\'s landscape/portrait aspect ratio.'}>AR Filter</label>
+      <Tooltip id={'ar-filter-selector-label'} style={tooltipStyle}/>
+    </div>
+      )
+  }
+
   const configMenuStyle = {
     position: 'absolute',
     display: 'flex',
@@ -229,7 +293,7 @@ function App() {
     transformOrigin: 'top left',
     transform: 'rotate(-90deg)',
     width: '50px',
-    marginTop: '200px',
+    marginTop: '210px',
     marginLeft: '5px',
     fontSize: 32,
     color: '#a5a8a5',
@@ -260,15 +324,15 @@ function App() {
         <div style={configMenuLabel}>Config</div>
         <div>
           {addSlider('ar_fuzzines', 'AR fuzzines', 'How different can the aspect ratio of the shots be \ncompared to the screen\'s aspect ratio.', 0.1, 3, 0.1)}
-          {addShotTimerInput()}
+          {addARFilterSelector()}
           {addTextInput('game_names_filter', 'Game Names Filter', 'Filter by game name. \nMay include multiples, separated by commas.', 150)}
-          {addColor('background_color', 'Background Color')}
-          {addCheckbox('preserve_ar_orientation', 'Preserve AR orientation', 'Allow vertical shots if the window \nis horizontal and vice-versa.')}
-          {addCheckbox('zoom_to_fit_ar', 'Zoom to fit AR', '')}
-          {addCheckbox('allow_nsfw', 'Allow NSFW/Spoiler shots', '')}
+          {addShotTimerInput()}
           {addTextSelector()}
+          {addCheckbox('zoom_to_fit_ar', 'Zoom to fit AR', '')}
           {addCheckbox('scroll_shot', 'Scroll zoomed shot', 'Only available if "Zoom to fit AR" option is enabled.')}
           {addSlider('scroll_speed', 'Scroll speed', '', 1, 50, 0.1)}
+          {addColor('background_color', 'Background Color')}
+          {addCheckbox('allow_nsfw', 'Allow NSFW/Spoiler shots', '')}
 
           <div style={{width:'50px', height:'auto', float:'left', margin:'20px 10px 0px 0px', zIndex: 1}}>
             <FramedIcon />
@@ -288,6 +352,11 @@ function App() {
     return (ar1 < 1 && ar2 < 1) || (ar1 >= 1 && ar2 >= 1)
   }
 
+  function wider_or_narrower(window_ar, shot_ar){
+    if(window_ar > 1) return shot_ar >= window_ar //only accept wider images
+    else return shot_ar <= window_ar //only accept narrower images
+  }
+
   const getData = async (config, first_run) => {
     const imagesResponse = await getImages({});
     const authorsResponse = await getAuthors({});
@@ -297,7 +366,11 @@ function App() {
 
     const windowAR = window.innerWidth / window.innerHeight
 
-    const filteredARImages = normalizedImages.filter(image => Math.abs((image.width / image.height) - windowAR) < config.ar_fuzzines && (!config.preserve_ar_orientation || is_same_ar_orientation(image.width / image.height, windowAR)))
+    const filteredARImages = normalizedImages.filter(image =>
+      Math.abs((image.width / image.height) - windowAR) < config.ar_fuzzines &&
+      (config.ar_filter.value !== 'orientation_filter'  || is_same_ar_orientation(windowAR, image.width / image.height)) &&
+      (config.ar_filter.value !== 'ar_exclusion_filter' || wider_or_narrower(windowAR, image.width / image.height))
+    )
     
     const filteredSpoilerImages = filteredARImages.filter(image => config.allow_nsfw || !image.spoiler)
 
