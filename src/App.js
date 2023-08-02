@@ -217,7 +217,6 @@ function App() {
     height: 'auto',
     padding: '10px 0px 0px',
     bottom: '5%',
-    left: 'calc(100% - 50px)',
     transition: 'left 0.5s',
     backgroundColor: 'rgba(59, 59, 59, 0.475)',
     borderRadius: '10px',
@@ -233,8 +232,7 @@ function App() {
     marginTop: '200px',
     marginLeft: '5px',
     fontSize: 32,
-    color: '#DBDFD8',
-    opacity: 0.7,
+    color: '#a5a8a5',
     fontFamily: 'AtkinsonHyperlegible',
     userSelect: 'none',
     textAlign: 'center',
@@ -244,9 +242,9 @@ function App() {
   const displayZoneStyle = {
     position: 'absolute',
     top: '20%',
-    left: '50%',
-    width: '50%',
-    height: '80%',
+    left: '60%',
+    width: '40%',
+    height: '75%',
     transition: 'opacity 0.5s',
   }
 
@@ -257,8 +255,8 @@ function App() {
   }
 
   const configIconButton = (
-    <div className="display-zone" onMouseEnter={ (e) => e.target.style.opacity = '100%'} onMouseLeave={ (e) => e.target.style.opacity = '0%'} style={displayZoneStyle}>
-      <div className="config-menu" onMouseEnter={ (e) => e.target.style.left = 'calc(100% - 365px)'} onMouseLeave={ (e) => e.target.style.left = 'calc(100% - 50px)'} style={configMenuStyle}>
+    <div className="config-display-zone" style={displayZoneStyle}>
+      <div className="config-menu"  style={configMenuStyle}>
         <div style={configMenuLabel}>Config</div>
         <div>
           {addSlider('ar_fuzzines', 'AR fuzzines', 'How different can the aspect ratio of the shots be \ncompared to the screen\'s aspect ratio.', 0.1, 3, 0.1)}

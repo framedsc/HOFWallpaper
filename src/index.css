@@ -19,6 +19,23 @@ a {text-decoration: none;}
   overflow: hidden;
 }
 
+.config-menu {
+  left: calc(100% - 50px);
+}
+
+.config-menu:hover {
+  left: calc(100% - 365px);
+}
+
+.config-display-zone {
+  opacity: 0%;
+}
+
+.config-display-zone:hover {
+  opacity: 100%;
+}
+
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
