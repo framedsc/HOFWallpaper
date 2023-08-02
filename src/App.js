@@ -89,24 +89,30 @@ function App() {
     };
 
     return(<div>
-    <input type="range" name={display_name} min={min} max={max} step={step} onInput={changeValue} onChange={changeValue} defaultValue={config[value_name]}/>
+    <input type="range" name={display_name} min={min} max={max} step={step} onMouseUp={changeValue} defaultValue={config[value_name]}/>
     <label htmlFor={display_name} style={{...configStyle, textDecoration: (tooltip === '') ? 'none' : 'underline dotted'}} data-tooltip-id={display_name} data-tooltip-content={tooltip}>{display_name}</label>
     <Tooltip id={display_name} style={tooltipStyle}/>
     </div>)
   }
 
+  const [configUpdateTimeout, setConfigUpdateTimeout] = useState(0); // <-- Stores timeout reference
   function addColor(value_name, display_name){
     const changeValue = (event) => {
-      var new_config = config
-      console.log(`changing ${value_name} to ${event.target.value}`);
-      new_config[value_name] = event.target.value;
-      setConfig(new_config);
-      localStorage.setItem('config', JSON.stringify(config));
-      setDirtyConfigFlag(true);
+      clearTimeout(configUpdateTimeout);
+      setConfigUpdateTimeout(
+        setTimeout(() => {
+          var new_config = config
+          console.log(`changing ${value_name} to ${event.target.value}`);
+          new_config[value_name] = event.target.value;
+          setConfig(new_config);
+          localStorage.setItem('config', JSON.stringify(config));
+          setDirtyConfigFlag(true);
+        }, 300) // <-- Delay config update by 300 milliseconds to avoid blocking the re-rendering by doing so many calls
+      );
     };
 
     return (<div>
-      <input type="color" id={display_name} name={display_name} onInput={changeValue} onChange={changeValue} defaultValue={config[value_name]}/>
+      <input type="color" id={display_name} name={display_name} onChange={changeValue} defaultValue={config[value_name]}/>
       <label htmlFor={display_name} style={configStyle}> {display_name}</label>
     </div>)
   }
