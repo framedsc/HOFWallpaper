@@ -20,7 +20,7 @@ function App() {
     () => {
       return {
       ar_fuzzines: 1,
-      ar_filter: {value: 'none', label: 'None'},
+      ar_filter: {value: 'orientation_filter', label: 'Orientation'},
       change_shoot_every: 30000,
       allow_nsfw: false,
       game_names_filter: '',
@@ -325,7 +325,7 @@ function App() {
           {addShotTimerInput()}
           {addTextSelector()}
           {addCheckbox('zoom_to_fit_ar', 'Zoom to fit AR', '')}
-          {addCheckbox('scroll_shot', 'Scroll zoomed shot', 'Only available if "Zoom to fit AR" option is enabled.')}
+          {addCheckbox('scroll_shot', 'Scroll zoomed shot', 'Only works if "Zoom to fit AR" option is enabled.')}
           {addSlider('scroll_speed', 'Scroll speed', '', 1, 50, 0.1)}
           {addColor('background_color', 'Background Color')}
           {addCheckbox('allow_nsfw', 'Allow NSFW/Spoiler shots', '')}
