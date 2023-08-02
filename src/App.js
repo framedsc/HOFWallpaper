@@ -213,15 +213,11 @@ function App() {
   function addARFilterSelector(){
     const options = [
       { value: 'none', label: 'None' },
-      { value: 'orientation_filter', label: 'Orientation filter' },
-      { value: 'ar_exclusion_filter', label: 'AR exclusion filter' }
+      { value: 'orientation_filter', label: 'Orientation' },
+      { value: 'ar_exclusion_filter', label: 'Aspect Ratio Exclusion' }
     ]
 
     const handleChange = (value, action) => {
-      const windowAR = window.innerWidth / window.innerHeight
-      const imgAR = image1.width / image1.height
-      console.log(wider_or_narrower(windowAR, imgAR))
-
       var new_config = config
       console.log(`changing ar_filter to ${value.value}`);
       new_config.ar_filter = value;
@@ -243,7 +239,7 @@ function App() {
             fontSize: '13px',
             minHeight: '30px',
             height: '30px',
-            width: '160px',
+            width: '190px',
           }),
           singleValue: provided => ({
             ...provided,
@@ -252,7 +248,7 @@ function App() {
           valueContainer: provided => ({
             ...provided,
             height: '30px',
-            width: '160px',
+            width: '190px',
             padding: '0 6px',
           }),
           indicatorsContainer: provided => ({
@@ -268,7 +264,7 @@ function App() {
         options={options}
         onChange={handleChange}
       />
-      <label className='ar-filter-selector-label' id='ar-filter-selector-label' style={{...configStyle, marginTop: '5px', textDecoration: 'underline dotted'}} data-tooltip-id={'ar-filter-selector-label'} data-tooltip-content={'Orientation filter: Only allows shots with the same orientation as the window.\n AR exclusion filter: Only allows shots which aspect ratio is bigger/smaller than \nthe window\'s landscape/portrait aspect ratio.'}>AR Filter</label>
+      <label className='ar-filter-selector-label' id='ar-filter-selector-label' style={{...configStyle, marginTop: '5px', textDecoration: 'underline dotted'}} data-tooltip-id={'ar-filter-selector-label'} data-tooltip-content={'Orientation: Only allow shots in the same orientation as the window.\n Aspect Ratio Exclusion: Only allows shots which aspect ratio is bigger/smaller than \nthe window\'s landscape/portrait aspect ratio.'}>AR Filter</label>
       <Tooltip id={'ar-filter-selector-label'} style={tooltipStyle}/>
     </div>
       )
