@@ -149,7 +149,7 @@ function App() {
     };
 
     return (<div>
-      <input type="text" id={'shot-timer-input'} name={'shot-timer-input'} onInput={changeValue} onChange={changeValue} defaultValue={config.change_shoot_every/1000} style={{width: '40px'}}/>
+      <input type="number" id={'shot-timer-input'} name={'shot-timer-input'} onInput={changeValue} onChange={changeValue} defaultValue={config.change_shoot_every/1000} style={{width: '60px'}}/>
       <label htmlFor={'shot-timer-input'} style={{...configStyle, textDecoration: 'underline dotted'}} data-tooltip-id={'shot-timer-input'} data-tooltip-content={'Needs site reload.'}>{`Time between shots (in seconds)`}</label>
       <Tooltip id={'shot-timer-input'} style={tooltipStyle}/>
     </div>)
