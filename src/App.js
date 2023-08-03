@@ -67,7 +67,7 @@ function App() {
     textAlign: 'center',
   }
 
-  function addCheckbox(value_name, display_name, tooltip){
+  function addCheckbox(value_name, display_name, tooltip, disabledCondition){
     function changeValue(value_name){
       var new_config = config
       new_config[value_name] = !new_config[value_name];
@@ -76,13 +76,13 @@ function App() {
       setDirtyConfigFlag(true);
     }
     return (<div>
-      <input type="checkbox" onChange={() => changeValue(value_name)} defaultChecked={config[value_name]}/>
+      <input type="checkbox" onChange={() => changeValue(value_name)} defaultChecked={config[value_name]} disabled={disabledCondition}/>
       <label style={{...configStyle, textDecoration: (tooltip === '') ? 'none' : 'underline dotted'}} data-tooltip-id={display_name} data-tooltip-content={tooltip}>{display_name}</label>
       <Tooltip id={display_name} style={tooltipStyle}/>
       </div>)
   }
 
-  function addSlider(value_name, display_name, tooltip, min, max, step){
+  function addSlider(value_name, display_name, tooltip, min, max, step, disabledCondition){
     const changeValue = (event) => {
       var new_config = config
       console.log(`changing ${value_name} to ${event.target.value}`);
@@ -93,14 +93,14 @@ function App() {
     };
 
     return(<div>
-    <input type="range" name={display_name} min={min} max={max} step={step} onMouseUp={changeValue} defaultValue={config[value_name]}/>
+    <input type="range" name={display_name} min={min} max={max} step={step} onMouseUp={changeValue} defaultValue={config[value_name]} disabled={disabledCondition}/>
     <label htmlFor={display_name} style={{...configStyle, textDecoration: (tooltip === '') ? 'none' : 'underline dotted'}} data-tooltip-id={display_name} data-tooltip-content={tooltip}>{display_name}</label>
     <Tooltip id={display_name} style={tooltipStyle}/>
     </div>)
   }
 
   const [configUpdateTimeout, setConfigUpdateTimeout] = useState(0); // <-- Stores timeout reference
-  function addColor(value_name, display_name){
+  function addColor(value_name, display_name, disabledCondition){
     const changeValue = (event) => {
       clearTimeout(configUpdateTimeout);
       setConfigUpdateTimeout(
@@ -116,7 +116,7 @@ function App() {
     };
 
     return (<div>
-      <input type="color" id={display_name} name={display_name} onChange={changeValue} defaultValue={config[value_name]}/>
+      <input type="color" id={display_name} name={display_name} onChange={changeValue} defaultValue={config[value_name]} disabled={disabledCondition}/>
       <label htmlFor={display_name} style={configStyle}> {display_name}</label>
     </div>)
   }
@@ -364,16 +364,16 @@ function App() {
       <div className="config-menu"  style={configMenuStyle}>
         <div style={configMenuLabel}>Config</div>
         <div>
-          {addSlider('ar_fuzzines', 'AR fuzzines', 'How different can the aspect ratio of the shots be \ncompared to the screen\'s aspect ratio.', 0.1, 3, 0.1)}
+          {addSlider('ar_fuzzines', 'AR fuzzines', 'How different can the aspect ratio of the shots be \ncompared to the screen\'s aspect ratio.', 0.1, 3, 0.1, false)}
           {addARFilterSelector()}
           {addTextInput('game_names_filter', 'Game Names Filter', 'Filter by game name. \nMay include multiples, separated by commas.', 150)}
           {addShotTimerInput()}
           {addTextSelector()}
-          {addCheckbox('zoom_to_fit_ar', 'Zoom to fit AR', '')}
-          {addCheckbox('scroll_shot', 'Scroll zoomed shot', 'Only works if "Zoom to fit AR" option is enabled.')}
-          {addSlider('scroll_speed', 'Scroll speed', '', 1, 50, 0.1)}
-          {addColor('background_color', 'Background Color')}
-          {addCheckbox('allow_nsfw', 'Allow NSFW/Spoiler shots', '')}
+          {addCheckbox('zoom_to_fit_ar', 'Zoom to fit AR', '', false)}
+          {addCheckbox('scroll_shot', 'Scroll zoomed shot', 'Only works if "Zoom to fit AR" option is enabled.', !config.zoom_to_fit_ar)}
+          {addSlider('scroll_speed', 'Scroll speed', '', 1, 50, 0.1, !config.zoom_to_fit_ar)}
+          {addColor('background_color', 'Background Color', config.zoom_to_fit_ar)}
+          {addCheckbox('allow_nsfw', 'Allow NSFW/Spoiler shots', '', false)}
           {bottomButtons()}
 
           <div style={{width:'50px', height:'auto', float:'left', margin:'20px 10px 0px 0px', zIndex: 1}}>
