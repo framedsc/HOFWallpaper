@@ -278,10 +278,12 @@ function App() {
       switchImage(siteData.imageData)
     }
 
+    const pauseShotButton = <button type="button" onClick={() => clearInterval(switchShotInterval)} >Pause Shot</button>
     const nextShotButton = <button type="button" onClick={() => switchAndReset()} >Next Shot</button>
     const downloadImageButton = <button type="button" onClick={() => downloadImage(imageToDisplay.current === 1 ? image1 : image2)} >Download Shot</button>
 
-    return <div style={{display: 'flex', margin: '0px auto', alignContent: 'space-between', flexWrap: 'wrap', gap: '50px', justifyContent: 'center'}}>
+    return <div style={{display: 'flex', margin: '0px auto', alignContent: 'space-between', flexWrap: 'wrap', gap: '10px', justifyContent: 'center'}}>
+      {pauseShotButton}
       {nextShotButton}
       {downloadImageButton}
     </div>
