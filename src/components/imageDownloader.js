@@ -1,5 +1,5 @@
-export const downloadImage = (imageUrl) => {
-  fetch(imageUrl)
+export const downloadImage = (image) => {
+  fetch(image.shotUrl)
       .then(response => response.blob())
       .then(blob => {
           // Create a temporary anchor element
@@ -8,7 +8,7 @@ export const downloadImage = (imageUrl) => {
           link.href = url;
 
           // Extract the filename from the URL
-          const filename = imageUrl.substring(imageUrl.lastIndexOf('/') + 1);
+          const filename = `${image.gameName} - ${image.author} - ${image.epochtime}`;
 
           // Set the download attribute and filename
           link.setAttribute('download', filename);

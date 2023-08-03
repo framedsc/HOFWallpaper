@@ -274,7 +274,7 @@ function App() {
 
   function bottomButtons(){
     const nextShotButton = <button type="button" onClick={() => switchImage(siteData.imageData)} >Next Shot</button>
-    const downloadImageButton = <button type="button" onClick={() => downloadImage(imageToDisplay.current === 1 ? image1.shotUrl : image2.shotUrl)} >Download Shot</button>
+    const downloadImageButton = <button type="button" onClick={() => downloadImage(imageToDisplay.current === 1 ? image1 : image2)} >Download Shot</button>
 
     return <div style={{display: 'flex', margin: '0px auto', alignContent: 'space-between', flexWrap: 'wrap', gap: '50px', justifyContent: 'center'}}>
       {nextShotButton}
