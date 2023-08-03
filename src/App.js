@@ -1,11 +1,13 @@
 import React, { useMemo, useEffect, useState, useRef} from 'react';
 import {Text, StyleSheet} from 'react-native';
+import { Tooltip } from 'react-tooltip'
+import Select from 'react-select'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPause, faForward, faArrowDown } from '@fortawesome/free-solid-svg-icons'
 import './App.css';
 import { getAuthors, getImages } from './api/request';
 import { addProperties, normalizeData } from '../src/utils/utils';
 import './assets/fonts/stylesheet.css';
-import { Tooltip } from 'react-tooltip'
-import Select from 'react-select'
 import { FramedIcon } from './assets/svgIcons';
 import { splashScreen } from './components/splashScreen';
 import { ClockAndDate } from './components/clock'
@@ -278,11 +280,35 @@ function App() {
       switchImage(siteData.imageData)
     }
 
-    const pauseShotButton = <button type="button" onClick={() => clearInterval(switchShotInterval)} >Pause Shot</button>
-    const nextShotButton = <button type="button" onClick={() => switchAndReset()} >Next Shot</button>
-    const downloadImageButton = <button type="button" onClick={() => downloadImage(imageToDisplay.current === 1 ? image1 : image2)} >Download Shot</button>
+    const buttonStyle = {
+      height: '25px',
+      color: '#DBDFD8',
+      zIndex: 2,
+      cursor: 'pointer',
+    }
 
-    return <div style={{display: 'flex', margin: '0px auto', alignContent: 'space-between', flexWrap: 'wrap', gap: '10px', justifyContent: 'center'}}>
+    const pauseShotButton = (
+      <div className='pause-shot-button' id='pause-shot-button' data-tooltip-id={'pause-shot-button'} data-tooltip-content={'Pause current shot from changing'}>
+        <FontAwesomeIcon icon={faPause} style={buttonStyle} onClick={() => clearInterval(switchShotInterval)}/>
+        <Tooltip id={'pause-shot-button'} style={tooltipStyle}/>
+      </div>
+    )
+
+    const nextShotButton = (
+      <div className='next-shot-button' id='next-shot-button' data-tooltip-id={'next-shot-button'} data-tooltip-content={'Skip current shot and \nrestart the switch shot timer'}>
+        <FontAwesomeIcon icon={faForward} style={buttonStyle} onClick={() => switchAndReset()}/>
+        <Tooltip id={'next-shot-button'} style={tooltipStyle}/>
+      </div>
+    )
+
+    const downloadImageButton = (
+      <div className='download-shot-button' id='download-shot-button' data-tooltip-id={'download-shot-button'} data-tooltip-content={'Download current shot'}>
+        <FontAwesomeIcon icon={faArrowDown} style={buttonStyle} onClick={() => downloadImage(imageToDisplay.current === 1 ? image1 : image2)}/>
+        <Tooltip id={'download-shot-button'} style={tooltipStyle}/>
+      </div>
+    )
+
+    return <div style={{display: 'flex', margin: '10px auto 0px', alignContent: 'space-between', flexWrap: 'wrap', gap: '75px', justifyContent: 'center'}}>
       {pauseShotButton}
       {nextShotButton}
       {downloadImageButton}
@@ -308,7 +334,7 @@ function App() {
     transformOrigin: 'top left',
     transform: 'rotate(-90deg)',
     width: '50px',
-    marginTop: '210px',
+    marginTop: '220px',
     marginLeft: '5px',
     fontSize: 32,
     color: '#a5a8a5',
