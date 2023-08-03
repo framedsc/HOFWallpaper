@@ -9,11 +9,13 @@ import Select from 'react-select'
 import { FramedIcon } from './assets/svgIcons';
 import { splashScreen } from './components/splashScreen';
 import { ClockAndDate } from './components/clock'
+import { downloadImage } from './components/imageDownloader';
 
 function App() {
   const [siteData, setSiteData] = useState({ imageData: [], authorData: [] });
   const [image1, setImage1] = useState(null);
   const [image2, setImage2] = useState(null);
+  const imageToDisplay = useRef(1)
 
   //-----Config menu------
   const init_config = useMemo(
@@ -270,6 +272,16 @@ function App() {
       )
   }
 
+  function bottomButtons(){
+    const nextShotButton = <button type="button" onClick={() => switchImage(siteData.imageData)} >Next Shot</button>
+    const downloadImageButton = <button type="button" onClick={() => downloadImage(imageToDisplay.current === 1 ? image1.shotUrl : image2.shotUrl)} >Download Shot</button>
+
+    return <div style={{display: 'flex', margin: '0px auto', alignContent: 'space-between', flexWrap: 'wrap', gap: '50px', justifyContent: 'center'}}>
+      {nextShotButton}
+      {downloadImageButton}
+    </div>
+  }
+
   const configMenuStyle = {
     position: 'absolute',
     display: 'flex',
@@ -329,6 +341,7 @@ function App() {
           {addSlider('scroll_speed', 'Scroll speed', '', 1, 50, 0.1)}
           {addColor('background_color', 'Background Color')}
           {addCheckbox('allow_nsfw', 'Allow NSFW/Spoiler shots', '')}
+          {bottomButtons()}
 
           <div style={{width:'50px', height:'auto', float:'left', margin:'20px 10px 0px 0px', zIndex: 1}}>
             <FramedIcon />
@@ -391,7 +404,6 @@ function App() {
   };
   
   const renderInitialized = useRef(false)
-  const imageToDisplay = useRef(1)
 
   useEffect(() => {
     if (!renderInitialized.current) {
@@ -444,6 +456,7 @@ function App() {
     },
     textBox:{
       top: '75%',
+      right: '10%',
       left: '10%',
       visibility: config.displayed_info.value === 'shot_info' ? 'visible' : 'hidden',
       textShadow: '0 0 3px #ffffffc9',
