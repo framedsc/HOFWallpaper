@@ -21,10 +21,12 @@ a {text-decoration: none;}
 
 .config-menu {
   left: calc(100% - 50px);
+  opacity: 35%;
 }
 
 .config-menu:hover {
   left: calc(100% - 365px);
+  opacity: 100%;
 }
 
 .config-display-zone {

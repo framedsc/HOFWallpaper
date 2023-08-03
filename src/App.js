@@ -322,7 +322,7 @@ function App() {
     height: 'auto',
     padding: '10px 0px 0px',
     bottom: '5%',
-    transition: 'left 0.5s',
+    transition: 'all 0.5s',
     backgroundColor: 'rgba(59, 59, 59, 0.475)',
     borderRadius: '10px',
     border: '2px solid #DBDFD8',
@@ -347,8 +347,8 @@ function App() {
   const displayZoneStyle = {
     position: 'absolute',
     top: '20%',
-    left: '60%',
-    width: '40%',
+    left: '70%',
+    width: '30%',
     height: '75%',
     transition: 'opacity 0.5s',
   }
