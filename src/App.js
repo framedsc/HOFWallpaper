@@ -273,7 +273,12 @@ function App() {
   }
 
   function bottomButtons(){
-    const nextShotButton = <button type="button" onClick={() => switchImage(siteData.imageData)} >Next Shot</button>
+    function switchAndReset(){
+      resetSwitchShotInterval()
+      switchImage(siteData.imageData)
+    }
+
+    const nextShotButton = <button type="button" onClick={() => switchAndReset()} >Next Shot</button>
     const downloadImageButton = <button type="button" onClick={() => downloadImage(imageToDisplay.current === 1 ? image1 : image2)} >Download Shot</button>
 
     return <div style={{display: 'flex', margin: '0px auto', alignContent: 'space-between', flexWrap: 'wrap', gap: '50px', justifyContent: 'center'}}>
@@ -404,27 +409,36 @@ function App() {
   };
   
   const renderInitialized = useRef(false)
+  const [switchShotInterval, setSwitchShotInterval] = useState(null);
+
+  function startSwitchShotInterval(){
+    setSwitchShotInterval(setInterval(() => {
+      getData(JSON.parse(localStorage.getItem('config')), false)
+    }, JSON.parse(localStorage.getItem('config')).change_shoot_every));
+  }
+
+  function resetSwitchShotInterval(){
+    startSwitchShotInterval()
+    clearInterval(switchShotInterval)
+  }
 
   useEffect(() => {
     if (!renderInitialized.current) {
       renderInitialized.current = true
 
-      let interval
       // you can't have an async useEffect, so usually people create an async function and call it right after
       const getDataAsync = async () => {
         // awaiting for getData to finish
         await getData(JSON.parse(localStorage.getItem('config')), true)
         // putting the setInterval function in a variable so we can clear when the component gets destroy
 
-        interval = setInterval(() => {
-          getData(JSON.parse(localStorage.getItem('config')), false)
-        }, JSON.parse(localStorage.getItem('config')).change_shoot_every);
+        startSwitchShotInterval();
       }
       getDataAsync()
     
       // this function gets called on component destroy (not necesserarly useful there but just in case)
       return () => {
-        clearInterval(interval)
+        clearInterval(switchShotInterval)
       }
     }
   },)
