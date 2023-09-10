@@ -20,12 +20,12 @@ a {text-decoration: none;}
 }
 
 .config-menu {
-  left: calc(100% - 50px);
+  left: calc(100%);
   opacity: 35%;
 }
 
 .config-menu:hover {
-  left: calc(100% - 365px);
+  left: calc(100% - 335px);
   opacity: 100%;
 }
 

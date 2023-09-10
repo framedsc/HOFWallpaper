@@ -3,7 +3,7 @@ import {Text, StyleSheet} from 'react-native';
 import { Tooltip } from 'react-tooltip'
 import Select from 'react-select'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPause, faForward, faArrowDown } from '@fortawesome/free-solid-svg-icons'
+import { faPause, faForward, faArrowDown, faCog } from '@fortawesome/free-solid-svg-icons'
 import './App.css';
 import { getAuthors, getImages } from './api/request';
 import { addProperties, normalizeData } from '../src/utils/utils';
@@ -323,25 +323,18 @@ function App() {
     padding: '10px 0px 0px',
     bottom: '5%',
     transition: 'all 0.5s',
+  }
+
+  const configContentMenuStyle = {
+    height: 'auto',
+    padding: '15px 15px 0px',
+    bottom: '5%',
+
     backgroundColor: 'rgba(59, 59, 59, 0.475)',
-    borderRadius: '10px',
+    borderRadius: '10px 0 0 10px',
     border: '2px solid #DBDFD8',
     boxShadow: '0 0 3px #DBDFD8',
     backdropFilter: 'blur(10px)',
-  }
-
-  const configMenuLabel = {
-    transformOrigin: 'top left',
-    transform: 'rotate(-90deg)',
-    width: '50px',
-    marginTop: '220px',
-    marginLeft: '5px',
-    fontSize: 32,
-    color: '#a5a8a5',
-    fontFamily: 'AtkinsonHyperlegible',
-    userSelect: 'none',
-    textAlign: 'center',
-    zIndex: -1,
   }
 
   const displayZoneStyle = {
@@ -359,31 +352,48 @@ function App() {
     fontFamily: 'AtkinsonHyperlegible',
   }
 
+  const cogStyle= {
+    height: '25px',
+    color: '#DBDFD8',
+    position: 'absolute',
+    top: 25,
+    left: '-50px',
+
+    padding: '10px 15px 10px 10px',
+    backgroundColor: 'rgba(59, 59, 59, 0.475)',
+    borderRadius: '10px 0 0 10px',
+    border: '2px solid #DBDFD8',
+    borderRight: '0px',
+    backdropFilter: 'blur(10px)',
+  }
+
   const configIconButton = (
     <div className="config-display-zone" style={displayZoneStyle}>
       <div className="config-menu"  style={configMenuStyle}>
-        <div style={configMenuLabel}>Config</div>
-        <div>
-          {addSlider('ar_fuzzines', 'AR fuzzines', 'How different can the aspect ratio of the shots be \ncompared to the screen\'s aspect ratio.', 0.1, 3, 0.1, false)}
-          {addARFilterSelector()}
-          {addTextInput('game_names_filter', 'Game Names Filter', 'Filter by game name. \nMay include multiples, separated by commas.', 150)}
-          {addShotTimerInput()}
-          {addTextSelector()}
-          {addCheckbox('zoom_to_fit_ar', 'Zoom to fit AR', '', false)}
-          {addCheckbox('scroll_shot', 'Scroll zoomed shot', 'Only works if "Zoom to fit AR" option is enabled.', !config.zoom_to_fit_ar)}
-          {addSlider('scroll_speed', 'Scroll speed', '', 1, 50, 0.1, !config.zoom_to_fit_ar)}
-          {addColor('background_color', 'Background Color', config.zoom_to_fit_ar)}
-          {addCheckbox('allow_nsfw', 'Allow NSFW/Spoiler shots', '', false)}
-          {bottomButtons()}
+        <FontAwesomeIcon icon={faCog} style={cogStyle} class="cog"/>
+        <div className="config-menu-content"  style={configContentMenuStyle}>
+          <div>
+            {addSlider('ar_fuzzines', 'AR fuzzines', 'How different can the aspect ratio of the shots be \ncompared to the screen\'s aspect ratio.', 0.1, 3, 0.1, false)}
+            {addARFilterSelector()}
+            {addTextInput('game_names_filter', 'Game Names Filter', 'Filter by game name. \nMay include multiples, separated by commas.', 150)}
+            {addShotTimerInput()}
+            {addTextSelector()}
+            {addCheckbox('zoom_to_fit_ar', 'Zoom to fit AR', '', false)}
+            {addCheckbox('scroll_shot', 'Scroll zoomed shot', 'Only works if "Zoom to fit AR" option is enabled.', !config.zoom_to_fit_ar)}
+            {addSlider('scroll_speed', 'Scroll speed', '', 1, 50, 0.1, !config.zoom_to_fit_ar)}
+            {addColor('background_color', 'Background Color', config.zoom_to_fit_ar)}
+            {addCheckbox('allow_nsfw', 'Allow NSFW/Spoiler shots', '', false)}
+            {bottomButtons()}
 
-          <div style={{width:'50px', height:'auto', float:'left', margin:'20px 10px 0px 0px', zIndex: 1}}>
-            <FramedIcon />
+            <div style={{width:'50px', height:'auto', float:'left', margin:'20px 10px 0px 0px', zIndex: 1}}>
+              <FramedIcon />
+            </div>
+            <p style={creditsStyle}>
+              Made by <a href='https://twitter.com/originalnicodr' style={{color: 'inherit', textDecoration: 'underline'}} target='_blank' rel='noreferrer'>Originalnicodr</a> using <br/>
+              the <a href='https://framedsc.com/HallOfFramed' style={{color: 'inherit', textDecoration: 'underline'}} target='_blank' rel='noreferrer'>HallOfFramed</a> database. <br/>
+              © FRAMED. All rights reserved.
+            </p>
           </div>
-          <p style={creditsStyle}>
-            Made by <a href='https://twitter.com/originalnicodr' style={{color: 'inherit', textDecoration: 'underline'}} target='_blank' rel='noreferrer'>Originalnicodr</a> using <br/>
-            the <a href='https://framedsc.com/HallOfFramed' style={{color: 'inherit', textDecoration: 'underline'}} target='_blank' rel='noreferrer'>HallOfFramed</a> database. <br/>
-            © FRAMED. All rights reserved.
-          </p>
         </div>
       </div>
     </div>
